@@ -1,0 +1,53 @@
+CONTROL CONF - PACOTE PARA HOSPEDAGEM
+
+ARQUIVOS QUE DEVEM SER ENVIADOS
+
+Envie todo o conteúdo desta pasta para a raiz do serviço de hospedagem, mantendo a pasta vendor na mesma posição.
+
+Estrutura obrigatória:
+
+index.html
+app.js
+styles.css
+filters.css
+vendor/pdf.min.js
+vendor/pdf.worker.min.js
+
+COMO PUBLICAR
+
+1. Abra o painel do serviço de hospedagem.
+2. Crie um site estático.
+3. Envie todo o conteúdo desta pasta, e não apenas o arquivo index.html.
+4. Defina index.html como página inicial, caso o serviço solicite.
+5. Depois da publicação, abra o endereço fornecido e teste a importação do PDF.
+
+MIGRAÇÃO DOS DADOS ATUAIS
+
+Os dados da versão aberta diretamente no computador não passam automaticamente para o endereço hospedado.
+
+Antes de mudar:
+
+1. Abra a versão atual do Control Conf.
+2. Clique em Exportar.
+3. Guarde o arquivo JSON gerado.
+4. Abra o site já hospedado.
+5. Clique em Importar dados e selecione esse arquivo JSON.
+
+LIMITAÇÃO DESTA VERSÃO
+
+Os dados são salvos no navegador de cada computador. Duas pessoas acessando o mesmo endereço não enxergarão automaticamente os mesmos dados. Limpar os dados do navegador também pode apagar o planejamento local.
+
+Para operação com vários usuários será necessário acrescentar banco de dados central, login, permissões, backups no servidor e sincronização. A hospedagem deste pacote, sozinha, não cria essas funções.
+
+SEGURANÇA
+
+Use um serviço com HTTPS. Enquanto não existir login e banco central, evite divulgar o endereço publicamente e mantenha cópias dos arquivos exportados pelo sistema.
+
+VALIDAÇÃO APÓS PUBLICAR
+
+- A página inicial abre sem erro.
+- O menu troca entre todas as telas.
+- A importação do relatório PDF funciona.
+- O Mapa das Baias aparece corretamente.
+- Exportar gera um arquivo JSON.
+- Depois de atualizar a página, os dados continuam no mesmo navegador.

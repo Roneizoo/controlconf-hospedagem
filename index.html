@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#173c2b">
+  <meta name="description" content="Planejamento de vagas, entradas, saídas e fluxo de caixa do Rural Conf.">
+  <title>Rural Conf.</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="filters.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">RP</div>
+        <div><strong>Rural Conf.</strong><span>Gestão do confinamento</span></div>
+      </div>
+      <nav id="mainNav" aria-label="Navegação principal">
+        <button class="nav-item active" data-page="overview"><span class="nav-icon">⌂</span><span>Visão Geral</span></button>
+        <button class="nav-item" data-page="capacity"><span class="nav-icon">↔</span><span>Capacidade e Movimentação</span></button>
+        <button class="nav-item" data-page="active"><span class="nav-icon">●</span><span>Lotes Ativos</span></button>
+        <button class="nav-item" data-page="pens"><span class="nav-icon">▦</span><span>Mapa dos Currais</span></button>
+        <button class="nav-item" data-page="analysis"><span class="nav-icon">⌕</span><span>Painel de Análise</span></button>
+        <button class="nav-item" data-page="rural"><span class="nav-icon">R</span><span>Bois Próprios</span></button>
+        <button class="nav-item" data-page="toreton"><span class="nav-icon">T</span><span>Compra de Toreton</span></button>
+        <button class="nav-item" data-page="hotel"><span class="nav-icon">H</span><span>Hotelaria</span></button>
+        <button class="nav-item" data-page="cash"><span class="nav-icon">$</span><span>Fluxo de Caixa</span></button>
+        <button class="nav-item" data-page="plans"><span class="nav-icon">✓</span><span>Planos Confirmados</span></button>
+      </nav>
+      <div class="sidebar-foot">
+        <span class="status-dot"></span>
+        <span>Dados salvos neste computador</span>
+      </div>
+    </aside>
+
+    <main class="workspace">
+      <header class="topbar">
+        <div class="topbar-title">
+          <button class="mobile-menu" id="mobileMenu" aria-label="Abrir menu">☰</button>
+          <div><span class="eyebrow">GESTÃO · CONFINAMENTO</span><h1 id="pageTitle">Visão Geral</h1></div>
+        </div>
+        <div class="top-actions">
+          <div class="year-control"><span>Horizonte</span><strong id="planningWindow">12 meses</strong></div>
+          <button class="btn ghost" id="importPlanBtn">Importar Rural</button>
+          <button class="btn ghost" id="importActiveBtn">Importar lotes PDF</button>
+          <button class="btn ghost" id="importBackupBtn">Importar dados</button>
+          <button class="btn ghost" id="exportBtn">Exportar</button>
+          <button class="btn primary" id="printBtn">PDF</button>
+        </div>
+        <input type="file" id="importPlanInput" accept=".json,application/json" multiple hidden>
+        <input type="file" id="importActiveInput" accept=".pdf,application/pdf" hidden>
+        <input type="file" id="importBackupInput" accept=".json,application/json" hidden>
+      </header>
+
+      <div class="content">
+        <section class="page active" id="page-overview">
+          <div class="notice" id="overviewNotice"></div>
+          <div class="kpi-grid overview-kpis" id="overviewKpis"></div>
+          <div class="grid two-one">
+            <article class="card chart-card"><div class="card-head"><div><span class="section-tag">OCUPAÇÃO</span><h2>Ocupação mensal</h2></div><div class="chart-head-tools"><label>Visualizar <select id="overviewRange"><option value="1">1 mês</option><option value="2">2 meses</option><option value="3">3 meses</option><option value="4" selected>4 meses</option><option value="5">5 meses</option><option value="6">6 meses</option><option value="7">7 meses</option><option value="8">8 meses</option><option value="9">9 meses</option><option value="10">10 meses</option><option value="11">11 meses</option><option value="12">12 meses</option></select></label><div class="legend"><span><i class="dot rural"></i>Rural</span><span><i class="dot toreton"></i>Toreton</span><span><i class="dot hotel"></i>Hotelaria</span></div></div></div><div id="occupancyChart" class="chart"></div></article>
+            <article class="card decision-card"><div class="card-head"><div><span class="section-tag">DECISÃO</span><h2>Próximos movimentos</h2></div></div><div id="nextMoves"></div></article>
+          </div>
+          <div class="grid two">
+            <article class="card"><div class="card-head"><div><span class="section-tag">CAIXA</span><h2>Entradas e saídas de dinheiro</h2></div><div class="chart-head-tools"><label>Visualizar <select id="cashRange"><option value="1">1 mês</option><option value="2">2 meses</option><option value="3">3 meses</option><option value="4" selected>4 meses</option><option value="5">5 meses</option><option value="6">6 meses</option><option value="7">7 meses</option><option value="8">8 meses</option><option value="9">9 meses</option><option value="10">10 meses</option><option value="11">11 meses</option><option value="12">12 meses</option></select></label><button class="text-btn" data-go="cash">Ver detalhes →</button></div></div><div class="cash-legend"><span><i class="cash-dot money-in"></i>Entrada</span><span><i class="cash-dot money-out"></i>Saída</span></div><div id="cashMiniChart" class="chart compact"></div></article>
+            <article class="card"><div class="card-head"><div><span class="section-tag">COMPOSIÇÃO</span><h2>O que ocupa o confinamento</h2></div><div class="chart-head-tools"><label>Mês <select id="compositionMonth"></select></label></div></div><div id="compositionPanel"></div></article>
+          </div>
+        </section>
+
+        <section class="page" id="page-capacity">
+          <div class="page-intro"><div><span class="section-tag">PROJEÇÃO DE VAGAS</span><h2>Capacidade nos próximos 12 meses</h2><p>O mês atual parte dos animais já alojados. Cada saída libera a vaga a partir do mês seguinte.</p></div><div class="fixed-cap"><span>Capacidade no mês atual</span><input id="currentCapacity" type="number" min="1" step="100" aria-label="Capacidade do mês atual"><small>animais</small></div></div>
+          <article class="card"><div class="card-head"><div><h2>Capacidade e ocupação mensal</h2><p>Altere a capacidade de cada mês conforme a condição operacional.</p></div></div><div class="table-wrap"><table id="capacityTable"></table></div></article>
+          <div class="grid two"><article class="card"><div class="card-head"><h2>Curva de ocupação</h2><div class="chart-head-tools"><label>Visualizar <select id="capacityRange"><option value="1">1 mês</option><option value="2">2 meses</option><option value="3">3 meses</option><option value="4" selected>4 meses</option><option value="5">5 meses</option><option value="6">6 meses</option><option value="7">7 meses</option><option value="8">8 meses</option><option value="9">9 meses</option><option value="10">10 meses</option><option value="11">11 meses</option><option value="12">12 meses</option></select></label></div></div><div id="capacityChart" class="chart"></div></article><article class="card"><h2>Leitura do plano</h2><div id="capacityInsights"></div></article></div>
+          <div class="section-divider"><span class="section-tag">MOVIMENTAÇÃO</span><h2>Entradas e saídas de animais</h2><p>Os movimentos explicam a ocupação e a liberação das vagas.</p></div>
+          <div class="kpi-grid movement-kpis" id="movementKpis"></div>
+          <article class="card"><div class="card-head"><div><h2>Entradas × saídas</h2><p>Cabeças por mês e composição de cada movimento.</p></div></div><div id="movementChart" class="chart tall"></div></article>
+          <article class="card"><div class="table-wrap"><table id="movementTable"></table></div></article>
+        </section>
+
+        <section class="page" id="page-active">
+          <div class="page-intro"><div><span class="section-tag">BASE DE DADOS</span><h2>Lotes ativos do Feed Manager</h2><p>RIP, Toreton e Compras são animais próprios; qualquer outra categoria é tratada como Boitel.</p></div><button class="btn primary" id="activePageImportBtn">Importar relatório PDF</button></div>
+          <div class="notice" id="activeNotice"></div>
+          <article class="card"><div class="card-head"><div><h2>Banco de lotes ativos</h2><p>Somente Animal Próprio e Boitel. A saída é sempre calculada 120 dias após a entrada.</p></div></div><div class="table-wrap"><table id="activeTable"></table></div></article>
+        </section>
+
+        <section class="page" id="page-pens">
+          <div class="page-intro pen-map-intro"><div><span class="section-tag">OCUPAÇÃO FÍSICA</span><h2>Mapa dos Currais</h2><p>Visão dos currais das linhas A a P. O PASTO não participa do mapa nem dos cálculos.</p></div><div class="pen-standard"><span>Capacidade padrão por curral</span><strong>160</strong><small>animais</small></div></div>
+          <div class="kpi-grid pen-kpis" id="penKpis"></div>
+          <article class="card pen-map-card">
+            <div class="pen-toolbar">
+              <div class="pen-filters" aria-label="Filtros do mapa dos currais">
+                <label>Bloco<select id="penBlockFilter"><option value="">Todos</option></select></label>
+                <label>Linha<select id="penLineFilter"><option value="">Todas</option></select></label>
+                <label>Tipo<select id="penTypeFilter"><option value="">Todos</option><option value="rural">Próprio</option><option value="hotel">Boitel</option></select></label>
+                <label>Situação<select id="penStatusFilter"><option value="">Todas</option><option value="empty">Vazias</option><option value="occupied">Ocupadas</option><option value="partial">Com espaço perdido</option><option value="full">Lotadas</option><option value="over">Acima de 160</option></select></label>
+                <button class="btn ghost" id="clearPenFilters" type="button">Limpar filtros</button>
+              </div>
+              <div class="pen-legend"><span><i class="pen-dot empty"></i>Vazia</span><span><i class="pen-dot rural"></i>Próprio</span><span><i class="pen-dot hotel"></i>Boitel</span><span><i class="pen-dot over"></i>Acima de 160</span></div>
+            </div>
+            <div id="penBlocks" class="pen-blocks"></div>
+          </article>
+          <article class="card pen-capacity-note"><div><strong>Capacidade operacional livre</strong><span>Somente currais totalmente vazios × 160. Exemplo: 10 currais vazios representam 1.600 lugares disponíveis.</span></div><div><strong>Espaço perdido</strong><span>Depois que um curral recebe um lote, todo o restante é considerado perdido para novas entradas, mesmo que ele tenha apenas 80 ou 100 animais.</span></div></article>
+        </section>
+
+        <section class="page" id="page-analysis">
+          <div class="page-intro"><div><span class="section-tag">ANÁLISE OPERACIONAL</span><h2>Painel de Análise</h2><p>Filtre os lotes por linha, saída e tempo mínimo de cocho.</p></div></div>
+          <div class="kpi-grid analysis-kpis" id="analysisKpis"></div>
+          <article class="card"><div class="card-head"><div><h2>Análise dos lotes</h2><p>Os totais abaixo consideram somente os filtros escolhidos.</p></div></div>
+            <div class="filter-bar" aria-label="Filtros dos lotes ativos">
+              <label>Linha<select id="activeLineFilter"><option value="">Todas</option></select></label>
+              <label>Tipo<select id="activeTypeFilter"><option value="">Todos</option><option value="rural">Próprio</option><option value="hotel">Boitel</option></select></label>
+              <label>Mês previsto para abate<select id="activeExitFilter"><option value="">Todos</option></select></label>
+              <label class="filter-switch"><span>Filtrar por dias</span><input id="useDaysFilter" type="checkbox" checked></label>
+              <label>Limite mínimo de dias<input id="activeDaysFilter" type="number" min="0" step="1" value="100"></label>
+              <label>Limite máximo de dias<input id="activeMaxDaysFilter" type="number" min="0" step="1" value="120"></label>
+              <button class="btn ghost" id="clearActiveFilters" type="button">Limpar filtros</button>
+              <span class="filter-help">Escolha livremente o intervalo. A previsão usa a média entre os dois limites.</span>
+            </div>
+            <div class="analysis-availability" id="availabilityReport"><div class="print-report-title"><h1>Rural Conf. — Escala prevista de abate</h1><p id="availabilityReportDate"></p></div><div class="card-head"><div><h2>Escala prevista de abate</h2><p id="availabilityHelp">A previsão usa a média dos limites informados e é dividida por quinzena.</p></div><div class="availability-actions"><button class="btn primary" id="printAvailability" type="button">Gerar relatório PDF</button></div></div><div class="report-rule"><strong>Regra do relatório:</strong> a data prevista é calculada pela média entre o limite mínimo e o máximo escolhidos acima.</div><div class="table-wrap availability-summary"><table id="availabilityTable"></table></div><h3 class="availability-detail-title">Lotes selecionados para envio</h3><div class="table-wrap"><table id="availabilityDetails"></table></div></div>
+          </article>
+        </section>
+
+        <section class="page" id="page-rural">
+          <div class="module-hero rural-bg"><div><span class="section-tag">BOI PRÓPRIO</span><h2>Rural</h2><p>Animais que chegam das fazendas pelo Planejamento Rural Pastagem e geram caixa quando saem gordos.</p></div><button class="btn white" id="openRuralImport">Importar do Planejamento</button></div>
+          <div class="grid form-layout"><article class="card"><div class="card-head"><div><h2>Incluir lote Rural</h2><p>Você também pode lançar manualmente uma previsão.</p></div></div><form id="ruralForm" class="lot-form" data-type="rural"></form></article><article class="card summary-panel" id="ruralSummary"></article></div>
+          <article class="card"><div class="card-head"><div><h2>Lotes próprios</h2><p>Previsões importadas e lançamentos manuais.</p></div></div><div class="table-wrap"><table id="ruralTable"></table></div></article>
+        </section>
+
+        <section class="page" id="page-toreton">
+          <div class="module-hero toreton-bg"><div><span class="section-tag">COMPRA ESTRATÉGICA</span><h2>Toreton</h2><p>Compre para ocupar vagas e programar receita nos meses em que faltará boi próprio.</p></div></div>
+          <div class="grid form-layout"><article class="card"><div class="card-head"><div><h2>Incluir compra de Toreton</h2><p>Custo padrão US$ 1.100 por cabeça e venda padrão US$ 1.500.</p></div></div><form id="toretonForm" class="lot-form" data-type="toreton"></form></article><article class="card summary-panel" id="toretonSummary"></article></div>
+          <article class="card"><div class="card-head"><div><h2>Compras planejadas</h2><p>Quantidade, entrada, saída e capital necessário.</p></div></div><div class="table-wrap"><table id="toretonTable"></table></div></article>
+        </section>
+
+        <section class="page" id="page-hotel">
+          <div class="module-hero hotel-bg"><div><span class="section-tag">SERVIÇO A TERCEIROS</span><h2>Hotelaria</h2><p>Reserve vagas por parceiro e acompanhe a receita prevista de cada lote.</p></div></div>
+          <div class="grid form-layout"><article class="card"><div class="card-head"><div><h2>Incluir lote de Hotelaria</h2><p>Receita padrão US$ 350 por cabeça na saída.</p></div></div><form id="hotelForm" class="lot-form" data-type="hotel"></form></article><article class="card summary-panel" id="hotelSummary"></article></div>
+          <article class="card"><div class="card-head"><div><h2>Lotes de parceiros</h2><p>Vagas comprometidas e receita prevista.</p></div></div><div class="table-wrap"><table id="hotelTable"></table></div></article>
+        </section>
+
+        <section class="page" id="page-cash">
+          <div class="page-intro"><div><span class="section-tag">FINANCEIRO</span><h2>Fluxo de caixa</h2><p>Recebimentos das vendas, receita de Hotelaria, compras e custo da antecipação.</p></div><div class="assumptions cash-settings"><label>Venda/cab<input type="number" id="defaultSale" min="0" step="10"></label><label>Compra Toreton<input type="number" id="defaultBuy" min="0" step="10"></label><label>Hotelaria<input type="number" id="defaultHotel" min="0" step="10"></label><label>Prazo da venda<select id="cashPaymentDays"><option value="0">À vista</option><option value="30">30 dias</option><option value="60">60 dias</option></select></label><label>Antecipar<select id="cashAnticipate"><option value="false">Não</option><option value="true">Sim</option></select></label><label>Juros ao ano (%)<input type="number" id="cashInterestRate" min="0" step="0.1" value="6.5"><small id="cashRateHelp"></small></label></div></div>
+          <div class="cash-month-panel"><strong>Meses do fluxo</strong><span>Escolha um ou vários meses.</span><div class="cash-month-filters" id="cashMonthFilters"></div></div>
+          <div class="kpi-grid cash-kpis" id="cashKpis"></div>
+          <article class="card cash-table-card"><div class="card-head"><div><h2>Valores mensais</h2><p>Entradas, saídas e saldo disponível em cada mês selecionado.</p></div></div><div class="table-wrap"><table id="cashTable"></table></div></article>
+          <article class="card"><div class="card-head"><div><h2>Visão gráfica do fluxo</h2><p>Comparação visual entre entradas e saídas; os valores completos estão na tabela acima.</p></div></div><div class="cash-legend"><span><i class="cash-dot money-in"></i>Entradas</span><span><i class="cash-dot money-out"></i>Saídas</span></div><div id="cashChart" class="chart compact"></div></article>
+        </section>
+
+        <section class="page" id="page-plans">
+          <div class="page-intro"><div><span class="section-tag">CENÁRIOS</span><h2>Planos confirmados</h2><p>Congele uma versão do planejamento antes de testar outras compras ou reservas.</p></div><button class="btn primary" id="confirmPlanBtn">Confirmar plano atual</button></div>
+          <div id="plansList" class="plans-grid"></div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+  <div class="modal-backdrop" id="editModal" hidden><div class="modal"><div class="modal-head"><h2>Editar lote</h2><button class="icon-btn" data-close-modal aria-label="Fechar">×</button></div><form id="editForm" class="lot-form"></form></div></div>
+  <script src="vendor/pdf.min.js?v=2"></script>
+  <script src="app.js?v=36"></script>
+</body>
+</html>
