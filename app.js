@@ -253,8 +253,8 @@ async function importActivePdf(e){
   var f=e.target.files&&e.target.files[0];if(!f)return;showToast('Lendo relatório de lotes ativos...');
   try{
     var pdfjs=window.pdfjsLib;if(!pdfjs)throw new Error('Leitor de PDF não foi carregado.');pdfjs.GlobalWorkerOptions.workerSrc='vendor/pdf.worker.min.js';
-    var doc=await pdfjs.getDocument({data:new Uint8Array(await f.arrayBuffer())}).promise,parsed=[],bovinoContext={reportDate:'',line:''};
-    for(var n=1;n<=doc.numPages;n++){var page=await doc.getPage(n),tc=await page.getTextContent();if(n===1){var header=tc.items.map(function(i){return String(i.str||'').trim();}).join(' ');if(!/Bovino\.OS/i.test(header)||!/Tipo\s+de\s+entrada/i.test(header))throw new Error('Use o novo relatório Bovino.OS de Lotes Ativos, com a coluna Tipo de entrada.');}parsed=parsed.concat(parseBovinoOsStandardPage(tc.items,bovinoContext));}
+    var doc=await pdfjs.getDocument({data:new Uint8Array(await f.arrayBuffer())}).promise,parsed=[],bovinoContext={reportDate:'',line:'',hasConsumo:true};
+    for(var n=1;n<=doc.numPages;n++){var page=await doc.getPage(n),tc=await page.getTextContent();if(n===1){var header=tc.items.map(function(i){return String(i.str||'').trim();}).join(' ');if(!/Bovino\.OS/i.test(header)||!/Tipo\s+de\s+entrada/i.test(header))throw new Error('Use o novo relatório Bovino.OS de Lotes Ativos, com a coluna Tipo de entrada.');bovinoContext.hasConsumo=/consum/i.test(header);}parsed=parsed.concat(parseBovinoOsStandardPage(tc.items,bovinoContext));}
     if(!parsed.length)throw new Error('Nenhum lote dos currais A a P foi reconhecido no relatório Bovino.OS.');
     state.lots=state.lots.filter(function(l){return l.source!=='feedmanager';}).concat(parsed);
     save();renderForms();renderAll();go('active');showToast(parsed.length+' lotes importados. Animais próprios são Próprio; Boitel, Parceria e demais tipos são Boitel.');
@@ -275,7 +275,10 @@ function parseBovinoOsStandardPage(items,context){
     var pen=textInRange(row,88,120).replace(/\s+/g,' ').trim(),qty=parseInt(textInRange(row,120,152).replace(/\D/g,''),10)||0;
     var penLine=(pen.match(/^([A-P])\b/i)||[])[1]||'',rowLine=currentLine||penLine.toUpperCase();
     var deaths=parseInt(textInRange(row,152,178).replace(/\D/g,''),10)||0,breed=textInRange(row,196,236),category=textInRange(row,236,296),rawEntryType=textInRange(row,298,340);
-    var confinementDays=parseInt(textInRange(row,486,512).replace(/\D/g,''),10)||0,entryText=textInRange(row,443,486),entryMatch=entryText.match(/\b\d{1,2}\/\d{1,2}\/\d{4}\b/),entryDate=entryMatch?dateToIso(entryMatch[0]):'';
+    // A Bovino.OS retirou a coluna "Consumo MN total da baia" a partir de set/2026, o que desloca
+    // (para a direita) as colunas seguintes, incluindo D. conf. e a data usada aqui como entrada.
+    var hasConsumo=context.hasConsumo!==false,confRange=hasConsumo?[486,512]:[493,535],entryRange=hasConsumo?[443,486]:[454,493];
+    var confinementDays=parseInt(textInRange(row,confRange[0],confRange[1]).replace(/\D/g,''),10)||0,entryText=textInRange(row,entryRange[0],entryRange[1]),entryMatch=entryText.match(/\b\d{1,2}\/\d{1,2}\/\d{4}\b/),entryDate=entryMatch?dateToIso(entryMatch[0]):'';
     if(!entryDate&&reportDate&&confinementDays)entryDate=addDaysToIso(reportDate,1-confinementDays);
     var exitDate=addDaysToIso(entryDate,120),isOwn=entryTypeIsOwn(rawEntryType),type=isOwn?'rural':'hotel';
     if(!qty||!entryDate||!exitDate||!rowLine)return;
