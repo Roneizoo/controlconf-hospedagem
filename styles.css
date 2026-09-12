@@ -17,3 +17,75 @@
 .freshness.aging{color:#8a641a}
 .freshness.stale{color:var(--danger)}
 @media(max-width:650px){.position{display:block;margin-bottom:8px}}
+
+/* Mapa dos Currais: busca, filtros, KPIs clicáveis, seleção/exportar e ficha do curral (paridade com o Recorrida) */
+.kpi.clickable{cursor:pointer;transition:.16s;font:inherit;text-align:left;color:inherit;display:block;width:100%}
+.kpi.clickable:focus-visible{transform:translateY(-2px);border-color:var(--gold);outline:none}
+@media(hover:hover){.kpi.clickable:hover{transform:translateY(-2px);border-color:var(--gold);outline:none}}
+.filters .filter-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.filters .filter-title h2{margin:2px 0 0}
+.link-btn{border:0;background:none;color:#8a641a;font:inherit;font-weight:800;cursor:pointer}
+.filter-grid{display:grid;grid-template-columns:1.5fr repeat(6,minmax(130px,1fr));gap:10px}
+.filter-grid label{display:grid;gap:5px;color:var(--muted);font-size:.78rem;font-weight:800}
+.filter-grid input,.filter-grid select{width:100%;height:45px;border:1px solid #ccd6cf;border-radius:9px;padding:9px 11px;background:#fff;color:var(--ink);font:inherit;font-size:.95rem}
+.search-wide{grid-column:span 2}
+.quick-filters{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:13px}
+.quick-filters span{color:var(--muted);font-size:.8rem}
+.quick-filters button{border:1px solid var(--line);background:#f8faf8;color:var(--green);border-radius:99px;padding:7px 11px;font:inherit;font-size:.78rem;font-weight:800;cursor:pointer}
+.filters .pen-legend{margin-top:13px}
+.result-bar{display:flex;justify-content:flex-end;align-items:center;margin:20px 2px 10px;flex-wrap:wrap;gap:8px}
+.selection-actions{display:flex;gap:14px}
+.selection-bar{background:var(--gold-soft);border:1px solid var(--gold);border-radius:13px;padding:12px 16px;margin:0 2px 16px}
+.selection-bar strong{color:#5c4110}
+.selection-bar-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.selection-buttons{display:flex;gap:8px;flex-wrap:wrap}
+.selection-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.selection-chip{background:#fff;border:1px solid var(--gold);border-radius:10px;padding:5px 6px 5px 10px;font-size:.78rem;color:var(--ink);font-weight:700;display:flex;gap:6px;align-items:center}
+.selection-chip button{border:0;background:var(--gold-soft);color:#8a641a;border-radius:50%;width:18px;height:18px;line-height:1;cursor:pointer;font-weight:900;font-size:.8rem;display:grid;place-items:center;padding:0}
+.pen-lots{display:grid;gap:4px}
+.pen-lot-row{position:relative;display:flex;gap:5px;align-items:flex-start;padding:3px 3px 3px 20px;border-radius:6px;background:#f6f8f6;cursor:pointer}
+.pen-lot-row:hover{background:#eef3ef}
+.pen-lot-row.alert{box-shadow:inset 0 0 0 1px var(--gold)}
+.pen-lot-row.has-note:after{content:"";position:absolute;right:4px;top:4px;width:7px;height:7px;border-radius:50%;background:var(--gold)}
+.pen-lot-select{position:absolute;left:0;top:1px;width:18px;height:18px;display:grid;place-items:center;cursor:pointer}
+.pen-lot-select input{width:13px;height:13px;cursor:pointer}
+.pen-lot-main{display:grid;gap:1px;min-width:0}
+.pen-lot-name{font-size:.61rem;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pen-lot-meta{font-size:.56rem;color:#56675d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.drawer-backdrop{position:fixed;inset:0;z-index:50;background:rgba(9,30,19,.62);padding:16px;display:grid;place-items:center}
+.drawer-backdrop[hidden]{display:none}
+.drawer-panel{width:min(1120px,100%);height:min(92vh,900px);overflow:auto;background:#fff;border-radius:20px;box-shadow:0 25px 80px rgba(0,0,0,.35);padding:24px}
+.drawer-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid var(--line);padding-bottom:15px;margin-bottom:18px}
+.drawer-head small{color:#8b651b;font-weight:900;letter-spacing:.12em}
+.drawer-head h2{font-size:2rem;margin:2px 0}
+.close-btn{border:1px solid var(--line);background:#fff;width:48px;height:48px;border-radius:12px;font-size:2rem;cursor:pointer;line-height:1}
+.detail-hero{display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:12px;margin-bottom:16px}
+.detail-box{background:#f4f7f4;border-radius:13px;padding:15px}
+.detail-box span{display:block;color:var(--muted);font-size:.8rem;font-weight:800}
+.detail-box strong{display:block;font-size:1.35rem;margin-top:4px}
+.detail-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.detail-item{border:1px solid var(--line);border-radius:11px;padding:12px}
+.detail-item span{display:block;color:var(--muted);font-size:.76rem}
+.detail-item strong{font-size:1rem}
+.notes-layout{display:grid;grid-template-columns:.85fr 1.15fr;gap:16px}
+.note-form,.notes-panel{border:1px solid var(--line);border-radius:14px;padding:16px}
+.note-form h3,.notes-panel h3{margin:0 0 12px}
+.note-form label{display:grid;gap:6px;color:var(--muted);font-size:.8rem;font-weight:800;margin-bottom:11px}
+.note-form select,.note-form textarea{border:1px solid #cad6ce;border-radius:9px;padding:10px;font:inherit}
+.note-form textarea{min-height:130px;resize:vertical}
+.note-actions{display:flex;gap:8px;flex-wrap:wrap}
+.note-card{border:1px solid var(--line);border-left:5px solid var(--gold);border-radius:10px;padding:12px;margin-bottom:9px}
+.note-card.closed{opacity:.62;border-left-color:#9aa69f}
+.note-card p{font-size:1rem;margin:4px 0 8px}
+.note-card small{color:var(--muted)}
+.note-card button{float:right;border:0;background:var(--green);color:#fff;border-radius:7px;padding:6px 9px;font-weight:800;cursor:pointer}
+#penPrintArea{padding:24px}
+#penPrintArea h1{font-size:1.3rem;margin:0 0 4px}
+#penPrintArea p{margin:0 0 16px;color:#444}
+#penPrintArea table{width:100%;border-collapse:collapse;font-size:.82rem}
+#penPrintArea th,#penPrintArea td{border:1px solid #999;padding:6px 8px;text-align:left}
+#penPrintArea th{background:#eee}
+@media print{body.print-pens .app-shell,body.print-pens .toast{display:none!important}body.print-pens #penPrintArea{display:block!important;position:absolute;top:0;left:0;width:100%}}
+@media(max-width:1250px){.filter-grid{grid-template-columns:repeat(4,1fr)}.search-wide{grid-column:span 2}}
+@media(max-width:950px){.filter-grid{grid-template-columns:repeat(2,1fr)}.detail-hero,.detail-grid{grid-template-columns:repeat(2,1fr)}.notes-layout{grid-template-columns:1fr}}
+@media(max-width:650px){.filter-grid{grid-template-columns:1fr}.search-wide{grid-column:auto}.drawer-backdrop{padding:0}.drawer-panel{height:100vh;border-radius:0;padding:16px}.detail-hero,.detail-grid{grid-template-columns:1fr 1fr}}

@@ -87,17 +87,35 @@
         <section class="page" id="page-pens">
           <div class="page-intro pen-map-intro"><div><span class="section-tag">OCUPAÇÃO FÍSICA</span><h2>Mapa dos Currais</h2><p>Visão dos currais das linhas A a P. O PASTO não participa do mapa nem dos cálculos.</p></div><div class="pen-standard"><span>Capacidade padrão por curral</span><strong>160</strong><small>animais</small></div></div>
           <div class="kpi-grid pen-kpis" id="penKpis"></div>
-          <article class="card pen-map-card">
-            <div class="pen-toolbar">
-              <div class="pen-filters" aria-label="Filtros do mapa dos currais">
-                <label>Bloco<select id="penBlockFilter"><option value="">Todos</option></select></label>
-                <label>Linha<select id="penLineFilter"><option value="">Todas</option></select></label>
-                <label>Tipo<select id="penTypeFilter"><option value="">Todos</option><option value="rural">Próprio</option><option value="hotel">Boitel</option></select></label>
-                <label>Situação<select id="penStatusFilter"><option value="">Todas</option><option value="empty">Vazias</option><option value="occupied">Ocupadas</option><option value="partial">Com espaço perdido</option><option value="full">Lotadas</option><option value="over">Acima de 160</option></select></label>
-                <button class="btn ghost" id="clearPenFilters" type="button">Limpar filtros</button>
-              </div>
-              <div class="pen-legend"><span><i class="pen-dot empty"></i>Vazia</span><span><i class="pen-dot rural"></i>Próprio</span><span><i class="pen-dot hotel"></i>Boitel</span><span><i class="pen-dot over"></i>Acima de 160</span></div>
+          <article class="card filters">
+            <div class="filter-title"><div><small>LOCALIZAR</small><h2>Buscar e filtrar lotes</h2></div><button class="link-btn" id="clearPenFilters" type="button">Limpar filtros</button></div>
+            <div class="filter-grid">
+              <label class="search-wide">Buscar lote, curral ou categoria/dono<input id="penSearch" type="search" placeholder="Ex.: 165/26, A 01 ou Bahia Rica"></label>
+              <label>Bloco<select id="penBlockFilter"><option value="">Todos</option></select></label>
+              <label>Linha<select id="penLineFilter"><option value="">Todas</option></select></label>
+              <label>Tipo<select id="penTypeFilter"><option value="">Todos</option><option value="rural">Próprio</option><option value="hotel">Boitel</option></select></label>
+              <label>Situação<select id="penStatusFilter"><option value="">Todas</option><option value="empty">Vazias</option><option value="occupied">Ocupadas</option><option value="partial">Com espaço perdido</option><option value="full">Lotadas</option><option value="over">Acima de 160</option></select></label>
+              <label>Dieta<select id="penDietFilter"><option value="">Todas</option></select></label>
+              <label>Anotações<select id="penNoteFilter"><option value="">Todas</option><option value="active">Com anotação ativa</option><option value="none">Sem anotação ativa</option></select></label>
+              <label>Consumo %PV mínimo<input id="penConsMin" type="text" inputmode="decimal" placeholder="Ex.: 1,8"></label>
+              <label>Consumo %PV máximo<input id="penConsMax" type="text" inputmode="decimal" placeholder="Ex.: 2,5"></label>
+              <label>Dias conf. mínimo<input id="penDaysMin" type="number" min="0" step="1" placeholder="Ex.: 10"></label>
+              <label>Dias conf. máximo<input id="penDaysMax" type="number" min="0" step="1" placeholder="Ex.: 80"></label>
             </div>
+            <div class="quick-filters pen-quick-filters"><span>Atalhos:</span><button type="button" data-cons="low">Abaixo de 1,8%</button><button type="button" data-cons="high">Acima de 2,5%</button><button type="button" data-diet="TERMINACAO">Dieta Terminação</button><button type="button" data-notes="active">Com anotação</button><button type="button" data-days="1-10">1 a 10 dias</button><button type="button" data-days="50-80">50 a 80 dias</button></div>
+            <div class="pen-legend"><span><i class="pen-dot empty"></i>Vazia</span><span><i class="pen-dot rural"></i>Próprio</span><span><i class="pen-dot hotel"></i>Boitel</span><span><i class="pen-dot over"></i>Acima de 160</span></div>
+          </article>
+          <section class="result-bar">
+            <div class="selection-actions"><button class="link-btn" id="penSelectAllFiltered" type="button">Selecionar todos</button><button class="link-btn" id="penClearSelection" type="button">Limpar seleção</button></div>
+          </section>
+          <section class="selection-bar" id="penSelectionBar" hidden>
+            <div class="selection-bar-top">
+              <strong id="penSelectionSummary">0 lotes selecionados · 0 animais</strong>
+              <div class="selection-buttons"><button class="btn secondary" id="penExportPrintBtn" type="button">Exportar lista (imprimir/PDF)</button><button class="btn secondary" id="penExportCsvBtn" type="button">Exportar CSV</button></div>
+            </div>
+            <div class="selection-chips" id="penSelectionChips"></div>
+          </section>
+          <article class="card pen-map-card">
             <div id="penBlocks" class="pen-blocks"></div>
           </article>
           <article class="card pen-capacity-note"><div><strong>Capacidade operacional livre</strong><span>Somente currais totalmente vazios × 160. Exemplo: 10 currais vazios representam 1.600 lugares disponíveis.</span></div><div><strong>Espaço perdido</strong><span>Depois que um curral recebe um lote, todo o restante é considerado perdido para novas entradas, mesmo que ele tenha apenas 80 ou 100 animais.</span></div></article>
@@ -157,7 +175,14 @@
 
   <div class="toast" id="toast" role="status"></div>
   <div class="modal-backdrop" id="editModal" hidden><div class="modal"><div class="modal-head"><h2>Editar lote</h2><button class="icon-btn" data-close-modal aria-label="Fechar">×</button></div><form id="editForm" class="lot-form"></form></div></div>
+  <div class="drawer-backdrop" id="penDrawer" hidden>
+    <article class="drawer-panel" role="dialog" aria-modal="true" aria-labelledby="penDetailTitle">
+      <header class="drawer-head"><div><small>FICHA OPERACIONAL</small><h2 id="penDetailTitle">Curral</h2></div><button class="close-btn" id="closePenDrawer" aria-label="Fechar">×</button></header>
+      <div id="penDetailBody"></div>
+    </article>
+  </div>
+  <div id="penPrintArea" class="print-area" hidden></div>
   <script src="vendor/pdf.min.js?v=2"></script>
-  <script src="app.js?v=36"></script>
+  <script src="app.js?v=37"></script>
 </body>
 </html>

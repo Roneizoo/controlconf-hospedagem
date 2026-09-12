@@ -7,11 +7,12 @@ var TITLES={overview:'Visão Geral',capacity:'Capacidade e Movimentação',activ
 var state=loadState();
 var reportSort={key:'line',dir:1};
 var cashSelectedMonths=null;
+var penSelected=new Set(), penDetailKey='';
 
 function defaultPenBlocks(){return [{id:'01',name:'Bloco 01',lines:['A','B','C','D','E','F']},{id:'02',name:'Bloco 02',lines:['G','H','I','J','K']},{id:'03',name:'Bloco 03',lines:['L','M','N','O','P']}];}
 function normalizedPenBlocks(saved){var standard=defaultPenBlocks();if(!Array.isArray(saved)||saved.length!==3)return standard;return standard.map(function(block,i){return {id:block.id,name:String((saved[i]||{}).name||block.name),lines:block.lines.slice()};});}
-function defaults(){return {version:1,year:2027,capacity:CAPACITY,capacityByMonth:{},penBlocks:defaultPenBlocks(),defaults:{sale:1500,buy:1100,hotel:350},cash:{paymentDays:0,anticipate:false,annualInterest:6.5},lots:[],plans:[],activePlanId:null,updatedAt:new Date().toISOString()};}
-function loadState(){try{var d=JSON.parse(localStorage.getItem(KEY));if(d&&Array.isArray(d.lots)){var base=defaults();return Object.assign(base,d,{capacity:num(d.capacity)||CAPACITY,capacityByMonth:d.capacityByMonth||{},penBlocks:normalizedPenBlocks(d.penBlocks),defaults:Object.assign(base.defaults,d.defaults||{}),cash:Object.assign(base.cash,d.cash||{})});}}catch(e){}return defaults();}
+function defaults(){return {version:1,year:2027,capacity:CAPACITY,capacityByMonth:{},penBlocks:defaultPenBlocks(),defaults:{sale:1500,buy:1100,hotel:350},cash:{paymentDays:0,anticipate:false,annualInterest:6.5},lots:[],notes:[],hasConsumo:true,plans:[],activePlanId:null,updatedAt:new Date().toISOString()};}
+function loadState(){try{var d=JSON.parse(localStorage.getItem(KEY));if(d&&Array.isArray(d.lots)){var base=defaults();return Object.assign(base,d,{capacity:num(d.capacity)||CAPACITY,capacityByMonth:d.capacityByMonth||{},penBlocks:normalizedPenBlocks(d.penBlocks),defaults:Object.assign(base.defaults,d.defaults||{}),cash:Object.assign(base.cash,d.cash||{}),notes:Array.isArray(d.notes)?d.notes:[],hasConsumo:d.hasConsumo!==false});}}catch(e){}return defaults();}
 function save(){state.updatedAt=new Date().toISOString();localStorage.setItem(KEY,JSON.stringify(state));}
 function el(id){return document.getElementById(id);}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
@@ -32,6 +33,22 @@ function normalizedCategory(value){return String(value||'').normalize('NFD').rep
 function categoryIsOwn(value){var category=normalizedCategory(value);return category==='RIP'||category==='TORETON'||category==='COMPRAS';}
 function entryTypeIsOwn(value){return /^ANIMAIS?\b/i.test(normalizedCategory(value));}
 function activeReportDate(){var lots=state.lots.filter(function(l){return l.source==='feedmanager';});return lots.length?lots.map(function(l){return l.reportDate||'';}).sort().pop():'';}
+function decimal(v,d){return Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});}
+function numberBR(v){var x=parseFloat(String(v||'').replace(/\./g,'').replace(',','.').replace(/[^0-9.-]/g,''));return isFinite(x)?x:0;}
+function inputNumber(v){var s=String(v==null?'':v).trim();if(!s)return null;s=s.replace(/\s/g,'');if(s.indexOf(',')>=0)s=s.replace(/\./g,'').replace(',','.');var x=parseFloat(s.replace(/[^0-9.-]/g,''));return isFinite(x)?x:null;}
+function lotKey(l){return normalizedCategory(l.name)+'|'+String(l.entryDate||'');}
+function activeNotes(l){var lk=lotKey(l);return state.notes.filter(function(n){return n.status==='active'&&((n.scope==='lot'&&n.targetKey===lk)||(n.scope==='pen'&&n.targetKey===l.pen));});}
+function addNote(e){e.preventDefault();var l=penDetailLot(),fd=new FormData(e.target),scope=fd.get('scope'),text=String(fd.get('text')||'').trim();if(!l||!text)return;state.notes.push({id:uid(),scope:scope,targetKey:scope==='lot'?lotKey(l):l.pen,lotName:l.name,pen:l.pen,text:text,status:'active',createdAt:new Date().toISOString(),closedAt:''});save();renderPens();renderPenDetail();showToast('Anotação salva.');}
+function concludeNote(id){var n=state.notes.find(function(x){return x.id===id;});if(!n)return;n.status='closed';n.closedAt=new Date().toISOString();save();renderPens();renderPenDetail();showToast('Anotação concluída e mantida no histórico.');}
+function closePenNotes(){var l=penDetailLot();if(!l)return;var list=state.notes.filter(function(n){return n.status==='active'&&n.scope==='pen'&&n.targetKey===l.pen;});if(!list.length){showToast('Este curral não possui anotação ativa.');return;}if(!confirm('Concluir as '+list.length+' anotações ativas deste curral? Elas continuarão no histórico.'))return;list.forEach(function(n){n.status='closed';n.closedAt=new Date().toISOString();});save();renderPens();renderPenDetail();showToast('Anotações do curral concluídas.');}
+function noteCard(n){return '<article class="note-card '+(n.status==='closed'?'closed':'')+'">'+(n.status==='active'?'<button type="button" data-close-note="'+n.id+'">Concluir</button>':'')+'<small>'+(n.scope==='lot'?'LOTE':'CURRAL')+' · '+new Date(n.createdAt).toLocaleString('pt-BR')+(n.closedAt?' · concluída '+new Date(n.closedAt).toLocaleString('pt-BR'):'')+'</small><p>'+esc(n.text)+'</p></article>';}
+function nearbyDiet(clean,y,isNew){var lo=isNew?338:340,hi=isNew?400:412;return clean.filter(function(i){var x=i.transform[4],dy=i.transform[5]-y,t=String(i.str||'').trim();return x>=lo&&x<hi&&dy>=-13&&dy<=13&&t&&!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(t);}).sort(function(a,b){var dd=b.transform[5]-a.transform[5];return Math.abs(dd)>2?dd:a.transform[4]-b.transform[4];}).map(function(i){return String(i.str).trim();}).join(' ').trim();}
+function reportColumns(hasConsumo){
+  // A Bovino.OS mudou o relatório em set/2026: a coluna "Consumo MN total da baia" foi retirada,
+  // o que deslocou (para a direita) todas as colunas seguintes (D. conf., D. trato, GMD, pesos, datas).
+  return hasConsumo?{entryWeight:[412,441],entryDate:[443,486],days:[486,512],treatmentDays:[512,544],gmd:[544,572],estimatedWeight:[572,604],exitWeight:[604,631],estimatedExit:[632,680],consumption:[680,715],kgCabMS:[715,748],kgCabMN:[748,778],pv:[778,820]}
+  :{entryWeight:[400,454],entryDate:[454,493],days:[493,535],treatmentDays:[535,565],gmd:[565,593],estimatedWeight:[593,623],exitWeight:[623,653],estimatedExit:[653,692],consumption:null,kgCabMS:[692,735],kgCabMN:[735,767],pv:[767,830]};
+}
 function daysSince(iso){if(!iso)return null;var d=new Date(iso+'T00:00:00'),now=new Date();now.setHours(0,0,0,0);return Math.round((now-d)/86400000);}
 function freshnessLabel(iso){var n=daysSince(iso);if(n===null)return '';var cls=n>=3?'stale':n>=1?'aging':'',text=n<=0?'hoje':n===1?'há 1 dia':'há '+n+' dias';return ' <b class="freshness '+cls+'">('+text+')</b>';}
 function renderHeaderPosition(){var el2=el('positionLabel');if(!el2)return;var reportDate=activeReportDate();el2.innerHTML=reportDate?'Posição em '+esc(formatIsoDate(reportDate))+freshnessLabel(reportDate):'Nenhum relatório de lotes ativos importado';}
@@ -66,8 +83,20 @@ function init(){
   el('currentCapacity').onchange=function(){setMonthCapacity(planningStartKey(),this.value);};
   el('capacityTable').onchange=function(e){if(e.target.matches('[data-capacity-month]'))setMonthCapacity(e.target.dataset.capacityMonth,e.target.value);};
   el('penBlockFilter').onchange=renderPens;el('penLineFilter').onchange=renderPens;el('penTypeFilter').onchange=renderPens;el('penStatusFilter').onchange=renderPens;
-  el('clearPenFilters').onclick=function(){el('penBlockFilter').value='';el('penLineFilter').value='';el('penTypeFilter').value='';el('penStatusFilter').value='';renderPens();};
-  el('penBlocks').onchange=function(e){if(!e.target.matches('[data-pen-block-name]'))return;var block=state.penBlocks.find(function(b){return b.id===e.target.dataset.penBlockName;});if(!block)return;block.name=String(e.target.value||'').trim()||('Bloco '+block.id);e.target.value=block.name;save();renderPens();showToast('Nome do bloco atualizado.');};
+  el('penSearch').oninput=renderPens;el('penDietFilter').onchange=renderPens;el('penNoteFilter').onchange=renderPens;el('penConsMin').oninput=renderPens;el('penConsMax').oninput=renderPens;el('penDaysMin').oninput=renderPens;el('penDaysMax').oninput=renderPens;
+  el('clearPenFilters').onclick=function(){el('penBlockFilter').value='';el('penLineFilter').value='';el('penTypeFilter').value='';el('penStatusFilter').value='';el('penSearch').value='';el('penDietFilter').value='';el('penNoteFilter').value='';el('penConsMin').value='';el('penConsMax').value='';el('penDaysMin').value='';el('penDaysMax').value='';renderPens();};
+  var penQuickFilters=document.querySelector('.pen-quick-filters');if(penQuickFilters)penQuickFilters.onclick=function(e){var b=e.target.closest('button');if(!b)return;if(b.dataset.cons==='low'){el('penConsMin').value='';el('penConsMax').value='1.8';}if(b.dataset.cons==='high'){el('penConsMin').value='2.5';el('penConsMax').value='';}if(b.dataset.diet)el('penDietFilter').value=b.dataset.diet;if(b.dataset.notes)el('penNoteFilter').value=b.dataset.notes;if(b.dataset.days){var r=b.dataset.days.split('-');el('penDaysMin').value=r[0];el('penDaysMax').value=r[1];}renderPens();};
+  el('penKpis').onclick=function(e){var b=e.target.closest('[data-kpi]');if(!b)return;if(b.dataset.kpi==='cons-low'){el('penConsMin').value='';el('penConsMax').value='1.8';el('penDietFilter').value='TERMINACAO';}if(b.dataset.kpi==='notes-active'){el('penNoteFilter').value='active';}renderPens();};
+  el('penBlocks').onchange=function(e){if(e.target.matches('[data-pen-block-name]')){var block=state.penBlocks.find(function(b){return b.id===e.target.dataset.penBlockName;});if(!block)return;block.name=String(e.target.value||'').trim()||('Bloco '+block.id);e.target.value=block.name;save();renderPens();showToast('Nome do bloco atualizado.');return;}var cb=e.target.closest('[data-pen-select]');if(!cb)return;if(cb.checked)penSelected.add(cb.dataset.penSelect);else penSelected.delete(cb.dataset.penSelect);updatePenSelectionBar();};
+  el('penBlocks').onclick=function(e){if(e.target.closest('.pen-lot-select'))return;var row=e.target.closest('[data-pen-lot]');if(!row)return;penDetailKey=row.dataset.penLot;renderPenDetail();el('penDrawer').hidden=false;};
+  el('penSelectAllFiltered').onclick=function(){state.lots.filter(function(l){return l.source==='feedmanager'&&lotMatchesPenFilters(l);}).forEach(function(l){penSelected.add(lotKey(l));});renderPens();};
+  el('penClearSelection').onclick=function(){penSelected.clear();renderPens();};
+  el('penSelectionChips').addEventListener('click',function(e){var b=e.target.closest('[data-pen-deselect]');if(!b)return;penSelected.delete(b.dataset.penDeselect);renderPens();});
+  el('penExportPrintBtn').onclick=exportPenPrint;el('penExportCsvBtn').onclick=exportPenCsv;
+  window.addEventListener('afterprint',function(){document.body.classList.remove('print-pens');});
+  el('closePenDrawer').onclick=function(){el('penDrawer').hidden=true;};el('penDrawer').onclick=function(e){if(e.target===this)this.hidden=true;};
+  el('penDetailBody').addEventListener('click',function(e){var b=e.target.closest('[data-close-note]');if(b)concludeNote(b.dataset.closeNote);});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')el('penDrawer').hidden=true;});
   el('activeLineFilter').onchange=renderAnalysis;el('activeTypeFilter').onchange=renderAnalysis;el('activeExitFilter').onchange=renderAnalysis;el('useDaysFilter').onchange=renderAnalysis;el('activeDaysFilter').oninput=renderAnalysis;el('activeMaxDaysFilter').oninput=renderAnalysis;
   el('clearActiveFilters').onclick=function(){el('activeLineFilter').value='';el('activeTypeFilter').value='';el('activeExitFilter').value='';el('useDaysFilter').checked=false;el('activeDaysFilter').value=100;el('activeMaxDaysFilter').value=120;renderAnalysis();};
   el('page-analysis').onchange=function(e){if(e.target.matches('[data-report-lot]')){var lot=state.lots.find(function(l){return l.id===e.target.dataset.reportLot;});if(lot){lot.reportEnabled=e.target.checked;save();renderAnalysis();}}};
@@ -136,7 +165,7 @@ function activeModel(){
 }
 function setMonthCapacity(key,value){var v=Math.round(num(value));if(v<1){showToast('Informe uma capacidade válida.');renderAll();return;}state.capacityByMonth=state.capacityByMonth||{};state.capacityByMonth[key]=v;save();renderAll();showToast('Capacidade de '+labelKey(key)+' atualizada.');}
 function renderAll(){var m=model();renderHeaderPosition();renderOverview(activeModel());renderCapacity(m);renderActive();renderPens();renderAnalysis();renderType('rural',m);renderType('toreton',m);renderType('hotel',m);renderMovement(m);renderCash(m);renderPlans();}
-function kpi(label,value,sub,cls){return '<div class="kpi '+(cls||'')+'"><span>'+label+'</span><strong>'+value+'</strong><small>'+sub+'</small></div>';}
+function kpi(label,value,sub,cls,action){var tag=action?'button':'div';return '<'+tag+' class="kpi '+(cls||'')+(action?' clickable':'')+'"'+(action?' data-kpi="'+action+'" type="button"':'')+'><span>'+label+'</span><strong>'+value+'</strong><small>'+sub+(action?' · toque para filtrar':'')+'</small></'+tag+'>';}
 function renderOverview(m){
   var peak=m.reduce(function(a,b){return b.total>a.total?b:a;},m[0]),ownExits=sum(m,function(r){return r.exits.rural;});
   el('overviewKpis').innerHTML=kpi('Capacidade atual',int(m[0].capacity),'vagas em '+m[0].label)+kpi('Animais atuais',int(m[0].total),'Próprio + Boitel')+kpi('Pico de ocupação',int(peak.total),peak.label+' · '+Math.round(peak.total/peak.capacity*100)+'%','gold')+kpi('Saída de boi próprio',int(ownExits),'RIP + Toreton + Compras','gold');
@@ -166,21 +195,72 @@ function renderActive(){
   el('activeTable').innerHTML=h+'</tbody>';
 }
 function penNumber(lot){var raw=String(lot.pen||'').toUpperCase(),m=raw.match(/(\d{1,2})/);return m?String(Number(m[1])).padStart(2,'0'):'';}
+function lotMatchesPenFilters(l){
+  var q=normalizedCategory(el('penSearch').value),diet=el('penDietFilter').value,note=el('penNoteFilter').value,min=inputNumber(el('penConsMin').value),max=inputNumber(el('penConsMax').value),daysMin=inputNumber(el('penDaysMin').value),daysMax=inputNumber(el('penDaysMax').value);
+  var notesCount=activeNotes(l).length,search=!q||normalizedCategory(l.name+' '+l.pen+' '+l.line+' '+(l.rawCategory||'')).indexOf(q)>=0;
+  return search&&(!diet||normalizedCategory(l.diet)===diet)&&(!note||(note==='active'?notesCount>0:notesCount===0))&&(min===null||l.pv>=min)&&(max===null||l.pv<=max)&&(daysMin===null||l.days>=daysMin)&&(daysMax===null||l.days<=daysMax);
+}
 function penMapData(){
-  var map={};state.lots.filter(function(l){return l.source==='feedmanager';}).forEach(function(l){var line=String(l.line||'').trim().toUpperCase(),number=penNumber(l);if(!/^[A-P]$/.test(line)||!number||Number(number)>10)return;var key=line+number;if(!map[key])map[key]={key:key,line:line,number:number,lots:[],quantity:0,types:{rural:0,hotel:0}};map[key].lots.push(l);map[key].quantity+=num(l.quantity);map[key].types[l.type]=(map[key].types[l.type]||0)+num(l.quantity);});return map;
+  var map={};state.lots.filter(function(l){return l.source==='feedmanager'&&lotMatchesPenFilters(l);}).forEach(function(l){var line=String(l.line||'').trim().toUpperCase(),number=penNumber(l);if(!/^[A-P]$/.test(line)||!number||Number(number)>10)return;var key=line+number;if(!map[key])map[key]={key:key,line:line,number:number,lots:[],quantity:0,types:{rural:0,hotel:0}};map[key].lots.push(l);map[key].quantity+=num(l.quantity);map[key].types[l.type]=(map[key].types[l.type]||0)+num(l.quantity);});return map;
 }
 function penStatus(pen){if(!pen||!pen.quantity)return 'empty';if(pen.quantity>160)return 'over';if(pen.quantity===160)return 'full';return 'partial';}
+function fillPenFilters(){
+  var diet=el('penDietFilter').value,note=el('penNoteFilter').value;
+  var diets=Array.from(new Set(state.lots.filter(function(l){return l.source==='feedmanager';}).map(function(l){return normalizedCategory(l.diet);}))).filter(Boolean).sort();
+  el('penDietFilter').innerHTML='<option value="">Todas</option>'+diets.map(function(d){return '<option value="'+esc(d)+'">'+esc(d)+'</option>';}).join('');
+  el('penDietFilter').value=diet;el('penNoteFilter').value=note;
+}
 function renderPens(){
+  fillPenFilters();
   var map=penMapData(),all=[];state.penBlocks.forEach(function(block){block.lines.forEach(function(line){for(var n=1;n<=10;n++){var key=line+String(n).padStart(2,'0'),pen=map[key]||{key:key,line:line,number:String(n).padStart(2,'0'),lots:[],quantity:0,types:{rural:0,hotel:0}};pen.blockId=block.id;all.push(pen);}});});
-  var occupied=all.filter(function(p){return p.quantity>0;}),empty=all.length-occupied.length,animals=sum(occupied,function(p){return p.quantity;}),internal=sum(occupied,function(p){return Math.max(0,160-p.quantity);}),over=sum(occupied,function(p){return Math.max(0,p.quantity-160);});
-  el('penKpis').innerHTML=kpi('Capacidade física',int(all.length*160),all.length+' currais × 160')+kpi('Animais alojados',int(animals),occupied.length+' currais ocupados')+kpi('Capacidade operacional livre',int(empty*160),empty+' currais vazios × 160','gold')+kpi('Espaço perdido',int(internal),'dentro de currais já ocupados','blue');
+  var allFeedLots=state.lots.filter(function(l){return l.source==='feedmanager';}),term=allFeedLots.filter(function(l){return normalizedCategory(l.diet)==='TERMINACAO';}),termLow=term.filter(function(l){return l.pv<1.8;}),activeNotesCount=state.notes.filter(function(n){return n.status==='active';}).length;
+  var occupied=all.filter(function(p){return p.quantity>0;}),empty=all.length-occupied.length,animals=sum(occupied,function(p){return p.quantity;}),internal=sum(occupied,function(p){return Math.max(0,160-p.quantity);});
+  el('penKpis').innerHTML=kpi('Capacidade física',int(all.length*160),all.length+' currais × 160')+kpi('Animais alojados',int(animals),occupied.length+' currais ocupados')+kpi('Capacidade operacional livre',int(empty*160),empty+' currais vazios × 160','gold')+kpi('Espaço perdido',int(internal),'dentro de currais já ocupados','blue')+kpi('Consumo abaixo de 1,8% (terminação)',int(sum(termLow,function(x){return x.quantity;})),'animais em terminação para observar','red','cons-low')+kpi('Anotações ativas',int(activeNotesCount),'acompanhamentos pendentes','blue','notes-active');
   var blockFilter=el('penBlockFilter'),lineFilter=el('penLineFilter'),selectedBlock=blockFilter.value,selectedLine=lineFilter.value,typeFilter=el('penTypeFilter').value,statusFilter=el('penStatusFilter').value;
   blockFilter.innerHTML='<option value="">Todos</option>'+state.penBlocks.map(function(b){return '<option value="'+esc(b.id)+'">'+esc(b.name)+'</option>';}).join('');blockFilter.value=selectedBlock;
   lineFilter.innerHTML='<option value="">Todas</option>'+'ABCDEFGHIJKLMNOP'.split('').map(function(l){return '<option value="'+l+'">Linha '+l+'</option>';}).join('');lineFilter.value=selectedLine;
   var blocks=state.penBlocks.filter(function(b){return !selectedBlock||b.id===selectedBlock;}).map(function(block){var lines=block.lines.filter(function(line){return !selectedLine||line===selectedLine;});var lineHtml=lines.map(function(line){var pens=all.filter(function(p){return p.line===line;}).filter(function(p){var status=penStatus(p),typeMatch=!typeFilter||(p.types[typeFilter]||0)>0,statusMatch=!statusFilter||(statusFilter==='occupied'?status!=='empty':status===statusFilter);return typeMatch&&statusMatch;});if(!pens.length)return '';return '<section class="pen-line"><div class="pen-line-head"><strong>Linha '+line+'</strong><span>'+pens.filter(function(p){return p.quantity>0;}).length+' ocupadas</span></div><div class="pen-grid">'+pens.map(renderPenCard).join('')+'</div></section>';}).join('');if(!lineHtml)return '';return '<section class="pen-block"><div class="pen-block-head"><div><span class="section-tag">SETOR '+esc(block.id)+'</span><input data-pen-block-name="'+esc(block.id)+'" value="'+esc(block.name)+'" maxlength="30" aria-label="Nome do bloco '+esc(block.id)+'"></div><span>Linhas '+block.lines[0]+'–'+block.lines[block.lines.length-1]+'</span></div>'+lineHtml+'</section>';}).join('');
   el('penBlocks').innerHTML=blocks||'<div class="empty-state">Nenhum curral corresponde aos filtros escolhidos.</div>';
+  updatePenSelectionBar();
 }
-function renderPenCard(p){var status=penStatus(p),dominant=p.types.rural>=p.types.hotel?'rural':'hotel',cls=status==='empty'?'empty':status==='over'?'over':dominant,free=Math.max(0,160-p.quantity),title=status==='empty'?'Curral disponível':status==='over'?'Capacidade ultrapassada':status==='full'?'Curral lotado':free+' lugares perdidos';var details=p.lots.map(function(l){return '<span>'+esc(l.name)+' · '+int(l.quantity)+' · '+(l.type==='rural'?'Próprio':'Boitel')+'</span>';}).join('');return '<article class="pen-card '+cls+'" tabindex="0"><div class="pen-card-top"><strong>'+p.key+'</strong><span>'+title+'</span></div>'+(status==='empty'?'<div class="pen-empty-mark">Livre</div>':'<div class="pen-count"><strong>'+int(p.quantity)+'</strong><span>de 160 animais</span></div><div class="pen-meter"><i style="width:'+Math.min(100,p.quantity/160*100)+'%"></i></div><div class="pen-lots">'+details+'</div>')+'</article>';}
+function penCardStatusTitle(status,free){return status==='empty'?'Curral disponível':status==='over'?'Capacidade ultrapassada':status==='full'?'Curral lotado':free+' lugares perdidos';}
+function penLotRow(l){
+  var notesCount=activeNotes(l).length,key=lotKey(l),checked=penSelected.has(key),alert=l.pv<1.8||l.pv>2.5;
+  return '<div class="pen-lot-row'+(alert?' alert':'')+(notesCount?' has-note':'')+'" data-pen-lot="'+esc(key)+'">'
+    +'<label class="pen-lot-select" title="Selecionar para exportar" onclick="event.stopPropagation()"><input type="checkbox" data-pen-select="'+esc(key)+'"'+(checked?' checked':'')+'></label>'
+    +'<div class="pen-lot-main"><span class="pen-lot-name">'+esc(l.name)+' · '+int(l.quantity)+' · '+(l.type==='rural'?'Próprio':'Boitel')+'</span>'
+    +'<span class="pen-lot-meta">'+esc(l.diet||'—')+' · '+decimal(l.pv,2)+'% PV · '+int(l.days)+'d conf.'+(notesCount?' · ● '+notesCount+' anot.':'')+'</span></div></div>';
+}
+function renderPenCard(p){
+  var status=penStatus(p),dominant=p.types.rural>=p.types.hotel?'rural':'hotel',cls=status==='empty'?'empty':status==='over'?'over':dominant,free=Math.max(0,160-p.quantity),title=penCardStatusTitle(status,free);
+  var lotsHtml=p.lots.map(penLotRow).join('');
+  return '<article class="pen-card '+cls+'"><div class="pen-card-top"><strong>'+p.key+'</strong><span>'+title+'</span></div>'+(status==='empty'?'<div class="pen-empty-mark">Livre</div>':'<div class="pen-count"><strong>'+int(p.quantity)+'</strong><span>de 160 animais</span></div><div class="pen-meter"><i style="width:'+Math.min(100,p.quantity/160*100)+'%"></i></div><div class="pen-lots">'+lotsHtml+'</div>')+'</article>';
+}
+function penSelectedLots(){var valid={};state.lots.forEach(function(l){if(l.source==='feedmanager')valid[lotKey(l)]=l;});Array.from(penSelected).forEach(function(k){if(!valid[k])penSelected.delete(k);});return Array.from(penSelected).map(function(k){return valid[k];}).filter(Boolean);}
+function updatePenSelectionBar(){var lots=penSelectedLots().sort(function(a,b){return (a.line+a.pen).localeCompare(b.line+b.pen,undefined,{numeric:true});}),bar=el('penSelectionBar');if(!bar)return;if(!lots.length){bar.hidden=true;return;}bar.hidden=false;el('penSelectionSummary').textContent=lots.length+' lote'+(lots.length===1?'':'s')+' selecionado'+(lots.length===1?'':'s')+' · '+int(sum(lots,function(x){return x.quantity;}))+' animais';el('penSelectionChips').innerHTML=lots.map(function(l){return '<span class="selection-chip">'+esc(l.pen)+' · '+esc(l.name)+'<button type="button" data-pen-deselect="'+esc(lotKey(l))+'" title="Remover da seleção" aria-label="Remover">×</button></span>';}).join('');}
+function penDetailLot(){return state.lots.find(function(l){return l.source==='feedmanager'&&lotKey(l)===penDetailKey;});}
+function penDetailItem(label,value){return '<div class="detail-item"><span>'+label+'</span><strong>'+esc(value==null||value===''?'—':value)+'</strong></div>';}
+function renderPenDetail(){
+  var l=penDetailLot();if(!l){el('penDrawer').hidden=true;return;}
+  el('penDetailTitle').textContent='Curral '+l.pen+' · '+l.name;
+  var lk=lotKey(l),related=state.notes.filter(function(n){return (n.scope==='lot'&&n.targetKey===lk)||(n.scope==='pen'&&n.targetKey===l.pen);}).sort(function(a,b){return b.createdAt.localeCompare(a.createdAt);});
+  el('penDetailBody').innerHTML='<div class="detail-hero"><div class="detail-box"><span>Animais</span><strong>'+int(l.quantity)+'</strong></div><div class="detail-box"><span>Dieta</span><strong>'+esc(l.diet)+'</strong></div><div class="detail-box"><span>Consumo %PV</span><strong>'+decimal(l.pv,2)+'%</strong></div><div class="detail-box"><span>Dias confinamento</span><strong>'+int(l.days)+'</strong></div></div><div class="detail-grid">'
+    +penDetailItem('Categoria / dono',l.rawCategory)+penDetailItem('Tipo',l.type==='rural'?'Próprio':'Boitel')+penDetailItem('Raça',l.breed)+penDetailItem('Entrada',formatIsoDate(l.entryDate))+penDetailItem('Peso entrada',decimal(l.entryWeight,1)+' kg')+penDetailItem('Peso estimado',decimal(l.estimatedWeight,1)+' kg')+penDetailItem('Peso de saída',decimal(l.exitWeight,1)+' kg')+penDetailItem('Saída estimada (relatório)',formatIsoDate(l.estimatedExit))+penDetailItem('Saída prevista (120 dias)',formatIsoDate(l.exitDate))+penDetailItem('GMD',decimal(l.gmd,2)+' kg/dia')+penDetailItem('Consumo MS por cabeça',decimal(l.kgCabMS,2)+' kg/dia')+penDetailItem('Consumo MS total da baia',decimal(l.kgCabMS*l.quantity,1)+' kg/dia')+penDetailItem('Consumo MN por cabeça',decimal(l.kgCabMN,2)+' kg/dia')+penDetailItem('Consumo MN total da baia',state.hasConsumo!==false?decimal(l.consumption,1)+' kg/dia':'não informado neste relatório')+penDetailItem('Dias de trato',int(l.treatmentDays))+penDetailItem('Mortes',int(l.deaths))
+    +'</div><div class="notes-layout"><form class="note-form" id="penNoteForm"><h3>Nova anotação</h3><label>A anotação acompanha<select name="scope"><option value="lot">Este lote, mesmo se mudar de curral</option><option value="pen">Este curral</option></select></label><label>Anotação<textarea name="text" required placeholder="Registre o que foi observado e o que precisa ser acompanhado."></textarea></label><div class="note-actions"><button class="btn primary" type="submit">Salvar anotação</button><button class="btn secondary" type="button" id="closePenNotesBtn">Concluir anotações do curral</button></div></form><section class="notes-panel"><h3>Histórico</h3>'+(related.length?related.map(noteCard).join(''):'<div class="empty-state">Nenhuma anotação registrada.</div>')+'</section></div>';
+  el('penNoteForm').onsubmit=addNote;el('closePenNotesBtn').onclick=closePenNotes;
+}
+function penExportRows(){return penSelectedLots().sort(function(a,b){return (a.line+a.pen).localeCompare(b.line+b.pen,undefined,{numeric:true});});}
+function exportPenPrint(){var lots=penExportRows();if(!lots.length){showToast('Selecione ao menos um lote para exportar.');return;}
+  var rows=lots.map(function(l){return '<tr><td>'+esc(l.line)+'</td><td>'+esc(l.pen)+'</td><td>'+esc(l.name)+'</td><td>'+esc(l.rawCategory||'')+'</td><td>'+(l.type==='rural'?'Próprio':'Boitel')+'</td><td>'+esc(l.breed||'')+'</td><td>'+esc(l.diet||'')+'</td><td>'+int(l.quantity)+'</td><td>'+decimal(l.pv,2)+'%</td><td>'+int(l.days)+'</td><td>'+decimal(l.estimatedWeight,1)+'</td><td>'+formatIsoDate(l.exitDate)+'</td></tr>';}).join('');
+  el('penPrintArea').innerHTML='<h1>Rural Conf. — Lotes selecionados (Mapa dos Currais)</h1><p>Posição em '+formatIsoDate(activeReportDate())+' · gerado em '+new Date().toLocaleString('pt-BR')+' · '+lots.length+' lote'+(lots.length===1?'':'s')+' · '+int(sum(lots,function(x){return x.quantity;}))+' animais</p><table><thead><tr><th>Linha</th><th>Curral</th><th>Lote</th><th>Categoria/Dono</th><th>Tipo</th><th>Raça</th><th>Dieta</th><th>Animais</th><th>Consumo %PV</th><th>Dias conf.</th><th>Peso est. (kg)</th><th>Saída prevista</th></tr></thead><tbody>'+rows+'</tbody></table>';
+  document.body.classList.add('print-pens');window.print();
+}
+function csvField(v){var s=String(v==null?'':v);return /[;"\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;}
+function exportPenCsv(){var lots=penExportRows();if(!lots.length){showToast('Selecione ao menos um lote para exportar.');return;}
+  var head=['Linha','Curral','Lote','Categoria/Dono','Tipo','Raça','Dieta','Animais','Consumo %PV','Dias confinamento','Peso estimado (kg)','Saída prevista'],rows=lots.map(function(l){return [l.line,l.pen,l.name,l.rawCategory||'',l.type==='rural'?'Próprio':'Boitel',l.breed||'',l.diet||'',l.quantity,decimal(l.pv,2),l.days,decimal(l.estimatedWeight,1),formatIsoDate(l.exitDate)].map(csvField).join(';');});
+  download('Lotes_selecionados_'+state.year+'_'+Date.now()+'.csv','﻿'+[head.join(';')].concat(rows).join('\r\n'),'text/csv');
+  showToast(lots.length+' lote'+(lots.length===1?'':'s')+' exportado'+(lots.length===1?'':'s')+' em CSV.');
+}
 function renderAnalysis(){
   var lots=state.lots.filter(function(l){return l.source==='feedmanager';});
   var lineSelect=el('activeLineFilter'),exitSelect=el('activeExitFilter'),selectedLine=lineSelect.value,selectedType=el('activeTypeFilter').value,selectedExit=exitSelect.value;
@@ -257,6 +337,7 @@ async function importActivePdf(e){
     for(var n=1;n<=doc.numPages;n++){var page=await doc.getPage(n),tc=await page.getTextContent();if(n===1){var header=tc.items.map(function(i){return String(i.str||'').trim();}).join(' ');if(!/Bovino\.OS/i.test(header)||!/Tipo\s+de\s+entrada/i.test(header))throw new Error('Use o novo relatório Bovino.OS de Lotes Ativos, com a coluna Tipo de entrada.');bovinoContext.hasConsumo=/consum/i.test(header);}parsed=parsed.concat(parseBovinoOsStandardPage(tc.items,bovinoContext));}
     if(!parsed.length)throw new Error('Nenhum lote dos currais A a P foi reconhecido no relatório Bovino.OS.');
     state.lots=state.lots.filter(function(l){return l.source!=='feedmanager';}).concat(parsed);
+    state.hasConsumo=!!bovinoContext.hasConsumo;
     save();renderForms();renderAll();go('active');showToast(parsed.length+' lotes importados. Animais próprios são Próprio; Boitel, Parceria e demais tipos são Boitel.');
   }catch(err){console.error(err);showToast(err.message||'Não foi possível ler este relatório PDF.');}finally{e.target.value='';}
 }
@@ -276,13 +357,17 @@ function parseBovinoOsStandardPage(items,context){
     var penLine=(pen.match(/^([A-P])\b/i)||[])[1]||'',rowLine=currentLine||penLine.toUpperCase();
     var deaths=parseInt(textInRange(row,152,178).replace(/\D/g,''),10)||0,breed=textInRange(row,196,236),category=textInRange(row,236,296),rawEntryType=textInRange(row,298,340);
     // A Bovino.OS retirou a coluna "Consumo MN total da baia" a partir de set/2026, o que desloca
-    // (para a direita) as colunas seguintes, incluindo D. conf. e a data usada aqui como entrada.
-    var hasConsumo=context.hasConsumo!==false,confRange=hasConsumo?[486,512]:[493,535],entryRange=hasConsumo?[443,486]:[454,493];
-    var confinementDays=parseInt(textInRange(row,confRange[0],confRange[1]).replace(/\D/g,''),10)||0,entryText=textInRange(row,entryRange[0],entryRange[1]),entryMatch=entryText.match(/\b\d{1,2}\/\d{1,2}\/\d{4}\b/),entryDate=entryMatch?dateToIso(entryMatch[0]):'';
+    // (para a direita) as colunas seguintes, incluindo D. conf., D. trato, GMD, pesos e datas de saída.
+    var hasConsumo=context.hasConsumo!==false,C=reportColumns(hasConsumo);
+    var confinementDays=parseInt(textInRange(row,C.days[0],C.days[1]).replace(/\D/g,''),10)||0,entryText=textInRange(row,C.entryDate[0],C.entryDate[1]),entryMatch=entryText.match(/\b\d{1,2}\/\d{1,2}\/\d{4}\b/),entryDate=entryMatch?dateToIso(entryMatch[0]):'';
     if(!entryDate&&reportDate&&confinementDays)entryDate=addDaysToIso(reportDate,1-confinementDays);
     var exitDate=addDaysToIso(entryDate,120),isOwn=entryTypeIsOwn(rawEntryType),type=isOwn?'rural':'hotel';
     if(!qty||!entryDate||!exitDate||!rowLine)return;
-    var sourceKey=['feedmanager',lotText,pen,entryDate].join('|');out.push({id:uid(type),type:type,name:lotText,origin:isOwn?'Animal próprio':'Boitel',rawCategory:category,rawEntryType:rawEntryType,quantity:qty,entry:entryDate.slice(0,7),exit:exitDate.slice(0,7),entryDate:entryDate,exitDate:exitDate,deaths:deaths,line:rowLine,pen:pen,breed:breed,entryType:isOwn?'Próprio':'Boitel',reportDate:reportDate,source:'feedmanager',sourceKey:sourceKey,notes:'Importado do Bovino.OS; saída calculada em 120 dias após a entrada; linha '+rowLine+', curral '+pen,salePrice:state.defaults.sale,buyPrice:state.defaults.buy,hotelPrice:state.defaults.hotel});
+    var diet=nearbyDiet(clean,y,!hasConsumo)||'NÃO INFORMADA',treatmentDays=parseInt(textInRange(row,C.treatmentDays[0],C.treatmentDays[1]).replace(/\D/g,''),10)||0;
+    var entryWeight=numberBR(textInRange(row,C.entryWeight[0],C.entryWeight[1])),gmd=numberBR(textInRange(row,C.gmd[0],C.gmd[1])),estimatedWeight=numberBR(textInRange(row,C.estimatedWeight[0],C.estimatedWeight[1])),exitWeight=numberBR(textInRange(row,C.exitWeight[0],C.exitWeight[1]));
+    var exitEstMatch=textInRange(row,C.estimatedExit[0],C.estimatedExit[1]).match(/\d{1,2}\/\d{1,2}\/\d{4}/),estimatedExit=exitEstMatch?dateToIso(exitEstMatch[0]):'';
+    var consumption=C.consumption?numberBR(textInRange(row,C.consumption[0],C.consumption[1])):0,kgCabMS=numberBR(textInRange(row,C.kgCabMS[0],C.kgCabMS[1])),kgCabMN=numberBR(textInRange(row,C.kgCabMN[0],C.kgCabMN[1])),pv=numberBR(textInRange(row,C.pv[0],C.pv[1]));
+    var sourceKey=['feedmanager',lotText,pen,entryDate].join('|');out.push({id:uid(type),type:type,name:lotText,origin:isOwn?'Animal próprio':'Boitel',rawCategory:category,rawEntryType:rawEntryType,quantity:qty,entry:entryDate.slice(0,7),exit:exitDate.slice(0,7),entryDate:entryDate,exitDate:exitDate,deaths:deaths,line:rowLine,pen:pen,breed:breed,entryType:isOwn?'Próprio':'Boitel',reportDate:reportDate,diet:diet,days:confinementDays,treatmentDays:treatmentDays,entryWeight:entryWeight,gmd:gmd,estimatedWeight:estimatedWeight,exitWeight:exitWeight,estimatedExit:estimatedExit,consumption:consumption,kgCabMS:kgCabMS,kgCabMN:kgCabMN,pv:pv,source:'feedmanager',sourceKey:sourceKey,notes:'Importado do Bovino.OS; saída calculada em 120 dias após a entrada; linha '+rowLine+', curral '+pen,salePrice:state.defaults.sale,buyPrice:state.defaults.buy,hotelPrice:state.defaults.hotel});
   });return out;
 }
 function textInRange(row,min,max){return row.filter(function(i){return i.x>=min&&i.x<max;}).map(function(i){return i.text;}).join(' ').trim();}
