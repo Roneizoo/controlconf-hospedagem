@@ -31,6 +31,10 @@ function lotTypeLabel(t){return t==='rural'?'Rural':t==='toreton'?'Toreton':'Hot
 function normalizedCategory(value){return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim().toUpperCase();}
 function categoryIsOwn(value){var category=normalizedCategory(value);return category==='RIP'||category==='TORETON'||category==='COMPRAS';}
 function entryTypeIsOwn(value){return /^ANIMAIS?\b/i.test(normalizedCategory(value));}
+function activeReportDate(){var lots=state.lots.filter(function(l){return l.source==='feedmanager';});return lots.length?lots.map(function(l){return l.reportDate||'';}).sort().pop():'';}
+function daysSince(iso){if(!iso)return null;var d=new Date(iso+'T00:00:00'),now=new Date();now.setHours(0,0,0,0);return Math.round((now-d)/86400000);}
+function freshnessLabel(iso){var n=daysSince(iso);if(n===null)return '';var cls=n>=3?'stale':n>=1?'aging':'',text=n<=0?'hoje':n===1?'há 1 dia':'há '+n+' dias';return ' <b class="freshness '+cls+'">('+text+')</b>';}
+function renderHeaderPosition(){var el2=el('positionLabel');if(!el2)return;var reportDate=activeReportDate();el2.innerHTML=reportDate?'Posição em '+esc(formatIsoDate(reportDate))+freshnessLabel(reportDate):'Nenhum relatório de lotes ativos importado';}
 
 function ruralExitFromMonthKey(mk){var entryDate=mk+'-15',exitDate=addDaysToIso(entryDate,120);return {entryDate:entryDate,exitDate:exitDate,exit:exitDate.slice(0,7)};}
 function normalizeFeedManagerLots(){
@@ -131,7 +135,7 @@ function activeModel(){
   rows.forEach(function(r){r.free=r.capacity-r.total;r.entryTotal=0;r.exitTotal=r.exits.rural+r.exits.hotel;r.revenue=r.ruralSales+r.hotelRevenue;r.net=r.revenue;});return rows;
 }
 function setMonthCapacity(key,value){var v=Math.round(num(value));if(v<1){showToast('Informe uma capacidade válida.');renderAll();return;}state.capacityByMonth=state.capacityByMonth||{};state.capacityByMonth[key]=v;save();renderAll();showToast('Capacidade de '+labelKey(key)+' atualizada.');}
-function renderAll(){var m=model();renderOverview(activeModel());renderCapacity(m);renderActive();renderPens();renderAnalysis();renderType('rural',m);renderType('toreton',m);renderType('hotel',m);renderMovement(m);renderCash(m);renderPlans();}
+function renderAll(){var m=model();renderHeaderPosition();renderOverview(activeModel());renderCapacity(m);renderActive();renderPens();renderAnalysis();renderType('rural',m);renderType('toreton',m);renderType('hotel',m);renderMovement(m);renderCash(m);renderPlans();}
 function kpi(label,value,sub,cls){return '<div class="kpi '+(cls||'')+'"><span>'+label+'</span><strong>'+value+'</strong><small>'+sub+'</small></div>';}
 function renderOverview(m){
   var peak=m.reduce(function(a,b){return b.total>a.total?b:a;},m[0]),ownExits=sum(m,function(r){return r.exits.rural;});
@@ -154,8 +158,8 @@ function renderCapacity(m){
 }
 function renderActive(){
   var lots=state.lots.filter(function(l){return l.source==='feedmanager';});
-  var reportDate=lots.length?lots.map(function(l){return l.reportDate||'';}).sort().pop():'';
-  el('activeNotice').innerHTML=lots.length?'<strong>Posição em '+esc(formatIsoDate(reportDate))+'.</strong> RIP, Toreton e Compras são Próprio; qualquer outra categoria é Boitel. PASTO não é incluído.':'Importe o relatório PDF para criar o banco de lotes ativos.';
+  var reportDate=activeReportDate();
+  el('activeNotice').innerHTML=lots.length?'<strong>Posição em '+esc(formatIsoDate(reportDate))+freshnessLabel(reportDate)+'.</strong> RIP, Toreton e Compras são Próprio; qualquer outra categoria é Boitel. PASTO não é incluído.':'Importe o relatório PDF para criar o banco de lotes ativos.';
   var h='<thead><tr><th>Lote / curral</th><th>Classificação</th><th>Categoria do relatório</th><th>Ativos</th><th>Entrada</th><th>Saída (120 dias)</th><th>Linha</th></tr></thead><tbody>';
   if(!lots.length)h+='<tr><td colspan="7"><div class="empty-state">Nenhum relatório de lotes ativos importado.</div></td></tr>';
   lots.slice().sort(function(a,b){return (a.line+a.pen).localeCompare(b.line+b.pen,undefined,{numeric:true});}).forEach(function(l){h+='<tr><td><strong>'+esc(l.name)+'</strong><br><small>Curral '+esc(l.pen||'—')+'</small></td><td><span class="pill '+l.type+'">'+(l.type==='rural'?'Próprio':'Boitel')+'</span></td><td>'+esc(l.rawCategory||'—')+'</td><td>'+int(l.quantity)+'</td><td>'+formatMonthOrDate(l.entryDate,l.entry)+'</td><td>'+formatMonthOrDate(l.exitDate,l.exit)+'</td><td>'+esc(l.line||'—')+'</td></tr>';});
@@ -169,7 +173,7 @@ function penStatus(pen){if(!pen||!pen.quantity)return 'empty';if(pen.quantity>16
 function renderPens(){
   var map=penMapData(),all=[];state.penBlocks.forEach(function(block){block.lines.forEach(function(line){for(var n=1;n<=10;n++){var key=line+String(n).padStart(2,'0'),pen=map[key]||{key:key,line:line,number:String(n).padStart(2,'0'),lots:[],quantity:0,types:{rural:0,hotel:0}};pen.blockId=block.id;all.push(pen);}});});
   var occupied=all.filter(function(p){return p.quantity>0;}),empty=all.length-occupied.length,animals=sum(occupied,function(p){return p.quantity;}),internal=sum(occupied,function(p){return Math.max(0,160-p.quantity);}),over=sum(occupied,function(p){return Math.max(0,p.quantity-160);});
-  el('penKpis').innerHTML=kpi('Capacidade física',int(all.length*160),all.length+' currais × 160')+kpi('Animais alojados',int(animals),occupied.length+' currais ocupados')+kpi('Capacidade operacional livre',int(empty*160),empty+' currais vazios × 160','gold')+kpi('Espaço perdido',int(internal),'dentro de currais já ocupados','blue')+(over?kpi('Acima da capacidade',int(over),'animais acima de 160','red'):kpi('Currais lotados',int(occupied.filter(function(p){return p.quantity===160;}).length),'com exatamente 160 animais'));
+  el('penKpis').innerHTML=kpi('Capacidade física',int(all.length*160),all.length+' currais × 160')+kpi('Animais alojados',int(animals),occupied.length+' currais ocupados')+kpi('Capacidade operacional livre',int(empty*160),empty+' currais vazios × 160','gold')+kpi('Espaço perdido',int(internal),'dentro de currais já ocupados','blue');
   var blockFilter=el('penBlockFilter'),lineFilter=el('penLineFilter'),selectedBlock=blockFilter.value,selectedLine=lineFilter.value,typeFilter=el('penTypeFilter').value,statusFilter=el('penStatusFilter').value;
   blockFilter.innerHTML='<option value="">Todos</option>'+state.penBlocks.map(function(b){return '<option value="'+esc(b.id)+'">'+esc(b.name)+'</option>';}).join('');blockFilter.value=selectedBlock;
   lineFilter.innerHTML='<option value="">Todas</option>'+'ABCDEFGHIJKLMNOP'.split('').map(function(l){return '<option value="'+l+'">Linha '+l+'</option>';}).join('');lineFilter.value=selectedLine;
