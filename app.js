@@ -200,9 +200,10 @@ function lotMatchesPenFilters(l){
   var notesCount=activeNotes(l).length,search=!q||normalizedCategory(l.name+' '+l.pen+' '+l.line+' '+(l.rawCategory||'')).indexOf(q)>=0;
   return search&&(!diet||normalizedCategory(l.diet)===diet)&&(!note||(note==='active'?notesCount>0:notesCount===0))&&(min===null||l.pv>=min)&&(max===null||l.pv<=max)&&(daysMin===null||l.days>=daysMin)&&(daysMax===null||l.days<=daysMax);
 }
-function penMapData(){
-  var map={};state.lots.filter(function(l){return l.source==='feedmanager'&&lotMatchesPenFilters(l);}).forEach(function(l){var line=String(l.line||'').trim().toUpperCase(),number=penNumber(l);if(!/^[A-P]$/.test(line)||!number||Number(number)>10)return;var key=line+number;if(!map[key])map[key]={key:key,line:line,number:number,lots:[],quantity:0,types:{rural:0,hotel:0}};map[key].lots.push(l);map[key].quantity+=num(l.quantity);map[key].types[l.type]=(map[key].types[l.type]||0)+num(l.quantity);});return map;
+function penMapData(applyFilters){
+  var map={};state.lots.filter(function(l){return l.source==='feedmanager'&&(applyFilters===false||lotMatchesPenFilters(l));}).forEach(function(l){var line=String(l.line||'').trim().toUpperCase(),number=penNumber(l);if(!/^[A-P]$/.test(line)||!number||Number(number)>10)return;var key=line+number;if(!map[key])map[key]={key:key,line:line,number:number,lots:[],quantity:0,types:{rural:0,hotel:0}};map[key].lots.push(l);map[key].quantity+=num(l.quantity);map[key].types[l.type]=(map[key].types[l.type]||0)+num(l.quantity);});return map;
 }
+function buildAllPens(map){var all=[];state.penBlocks.forEach(function(block){block.lines.forEach(function(line){for(var n=1;n<=10;n++){var key=line+String(n).padStart(2,'0'),pen=map[key]||{key:key,line:line,number:String(n).padStart(2,'0'),lots:[],quantity:0,types:{rural:0,hotel:0}};pen.blockId=block.id;all.push(pen);}});});return all;}
 function penStatus(pen){if(!pen||!pen.quantity)return 'empty';if(pen.quantity>160)return 'over';if(pen.quantity===160)return 'full';return 'partial';}
 function fillPenFilters(){
   var diet=el('penDietFilter').value,note=el('penNoteFilter').value;
@@ -212,10 +213,11 @@ function fillPenFilters(){
 }
 function renderPens(){
   fillPenFilters();
-  var map=penMapData(),all=[];state.penBlocks.forEach(function(block){block.lines.forEach(function(line){for(var n=1;n<=10;n++){var key=line+String(n).padStart(2,'0'),pen=map[key]||{key:key,line:line,number:String(n).padStart(2,'0'),lots:[],quantity:0,types:{rural:0,hotel:0}};pen.blockId=block.id;all.push(pen);}});});
+  var map=penMapData(),all=buildAllPens(map);
+  var allFull=buildAllPens(penMapData(false));
   var allFeedLots=state.lots.filter(function(l){return l.source==='feedmanager';}),term=allFeedLots.filter(function(l){return normalizedCategory(l.diet)==='TERMINACAO';}),termLow=term.filter(function(l){return l.pv<1.8;}),activeNotesCount=state.notes.filter(function(n){return n.status==='active';}).length;
-  var occupied=all.filter(function(p){return p.quantity>0;}),empty=all.length-occupied.length,animals=sum(occupied,function(p){return p.quantity;}),internal=sum(occupied,function(p){return Math.max(0,160-p.quantity);});
-  el('penKpis').innerHTML=kpi('Capacidade física',int(all.length*160),all.length+' currais × 160')+kpi('Animais alojados',int(animals),occupied.length+' currais ocupados')+kpi('Capacidade operacional livre',int(empty*160),empty+' currais vazios × 160','gold')+kpi('Espaço perdido',int(internal),'dentro de currais já ocupados','blue')+kpi('Consumo abaixo de 1,8% (terminação)',int(sum(termLow,function(x){return x.quantity;})),'animais em terminação para observar','red','cons-low')+kpi('Anotações ativas',int(activeNotesCount),'acompanhamentos pendentes','blue','notes-active');
+  var occupied=allFull.filter(function(p){return p.quantity>0;}),empty=allFull.length-occupied.length,animals=sum(occupied,function(p){return p.quantity;}),internal=sum(occupied,function(p){return Math.max(0,160-p.quantity);});
+  el('penKpis').innerHTML=kpi('Capacidade física',int(allFull.length*160),allFull.length+' currais × 160')+kpi('Animais alojados',int(animals),occupied.length+' currais ocupados')+kpi('Capacidade operacional livre',int(empty*160),empty+' currais vazios × 160','gold')+kpi('Espaço perdido',int(internal),'dentro de currais já ocupados','blue')+kpi('Consumo abaixo de 1,8% (terminação)',int(sum(termLow,function(x){return x.quantity;})),'animais em terminação para observar','red','cons-low')+kpi('Anotações ativas',int(activeNotesCount),'acompanhamentos pendentes','blue','notes-active');
   var blockFilter=el('penBlockFilter'),lineFilter=el('penLineFilter'),selectedBlock=blockFilter.value,selectedLine=lineFilter.value,typeFilter=el('penTypeFilter').value,statusFilter=el('penStatusFilter').value;
   blockFilter.innerHTML='<option value="">Todos</option>'+state.penBlocks.map(function(b){return '<option value="'+esc(b.id)+'">'+esc(b.name)+'</option>';}).join('');blockFilter.value=selectedBlock;
   lineFilter.innerHTML='<option value="">Todas</option>'+'ABCDEFGHIJKLMNOP'.split('').map(function(l){return '<option value="'+l+'">Linha '+l+'</option>';}).join('');lineFilter.value=selectedLine;
