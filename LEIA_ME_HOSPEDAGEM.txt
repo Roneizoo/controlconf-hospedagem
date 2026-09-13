@@ -2,16 +2,16 @@ CONTROL CONF - PACOTE PARA HOSPEDAGEM
 
 ARQUIVOS QUE DEVEM SER ENVIADOS
 
-Envie todo o conteúdo desta pasta para a raiz do serviço de hospedagem, mantendo a pasta vendor na mesma posição.
+Envie todo o conteúdo desta pasta para a raiz do serviço de hospedagem. Todos os arquivos ficam soltos, sem subpastas — isso evita o problema do GitHub não subir subpastas direito quando se arrasta a pasta pelo site.
 
-Estrutura obrigatória:
+Estrutura obrigatória (tudo na raiz, nenhuma subpasta):
 
 index.html
 app.js
 styles.css
 filters.css
-vendor/pdf.min.js
-vendor/pdf.worker.min.js
+pdf.min.js
+pdf.worker.min.js
 
 COMO PUBLICAR
 
