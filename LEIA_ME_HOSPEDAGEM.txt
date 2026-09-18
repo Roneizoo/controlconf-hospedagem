@@ -1,17 +1,38 @@
 CONTROL CONF - PACOTE PARA HOSPEDAGEM
 
+IMPORTANTE — IMPORTAÇÃO POR EXCEL, NÃO MAIS POR PDF (a partir de 18/09/2026)
+O Control Conf agora importa a planilha Excel de Lotes Ativos do Bovino.OS,
+em vez do relatório PDF. A leitura é pelo NOME de cada coluna (Linha, Lote,
+Curral, Cab., Categoria, Tipo de entrada, Proprietário, D. conf., etc.) —
+não pela posição do texto na página como era com o PDF. Isso quer dizer que,
+se a Bovino.OS mudar a ordem das colunas ou o layout visual do relatório de
+novo, a importação continua funcionando normalmente, desde que os nomes das
+colunas usadas não mudem. Se algum nome de coluna mudar, o app avisa que uma
+coluna essencial (Linha ou Lote) não foi encontrada — nesse caso, me avise
+com a planilha nova que eu ajusto.
+Testado contra uma planilha real (171 lotes, 16 linhas A–P), conferindo a
+soma de animais de cada linha uma a uma. Na tela de Lotes Ativos e no Mapa
+dos Currais, lotes Parceria aparecem com o rótulo "Parceria" (não "Boitel")
+e o card/detalhe do lote mostra o Proprietário quando a planilha informa.
+Nas telas de Capacidade e Análise, Parceria continua contada junto com
+Boitel (rótulo "Boitel/Parceria"), pois separar os dois na projeção
+financeira é uma mudança maior que ainda não foi pedida — avise se quiser
+esse detalhamento também nessas telas.
+Como a data de entrada agora vem de uma célula de data de verdade na
+planilha (e não de texto extraído do PDF), o problema antigo de data
+cortada ("22/06/2..." sem o ano) não existe mais.
+
 ARQUIVOS QUE DEVEM SER ENVIADOS
 
-Envie todo o conteúdo desta pasta para a raiz do serviço de hospedagem. Todos os arquivos ficam soltos, sem subpastas — isso evita o problema do GitHub não subir subpastas direito quando se arrasta a pasta pelo site.
+Envie todo o conteúdo desta pasta para a raiz do serviço de hospedagem, mantendo a pasta vendor na mesma posição.
 
-Estrutura obrigatória (tudo na raiz, nenhuma subpasta):
+Estrutura obrigatória:
 
 index.html
 app.js
 styles.css
 filters.css
-pdf.min.js
-pdf.worker.min.js
+vendor/xlsx.full.min.js
 
 COMO PUBLICAR
 
@@ -19,7 +40,7 @@ COMO PUBLICAR
 2. Crie um site estático.
 3. Envie todo o conteúdo desta pasta, e não apenas o arquivo index.html.
 4. Defina index.html como página inicial, caso o serviço solicite.
-5. Depois da publicação, abra o endereço fornecido e teste a importação do PDF.
+5. Depois da publicação, abra o endereço fornecido e teste a importação da planilha Excel.
 
 MIGRAÇÃO DOS DADOS ATUAIS
 
@@ -47,7 +68,7 @@ VALIDAÇÃO APÓS PUBLICAR
 
 - A página inicial abre sem erro.
 - O menu troca entre todas as telas.
-- A importação do relatório PDF funciona.
+- A importação da planilha Excel de Lotes Ativos funciona.
 - O Mapa das Baias aparece corretamente.
 - Exportar gera um arquivo JSON.
 - Depois de atualizar a página, os dados continuam no mesmo navegador.
