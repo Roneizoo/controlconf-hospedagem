@@ -32,7 +32,7 @@ index.html
 app.js
 styles.css
 filters.css
-vendor/xlsx.full.min.js
+vendor/xlsx.mini.min.js
 
 COMO PUBLICAR
 
@@ -41,6 +41,15 @@ COMO PUBLICAR
 3. Envie todo o conteúdo desta pasta, e não apenas o arquivo index.html.
 4. Defina index.html como página inicial, caso o serviço solicite.
 5. Depois da publicação, abra o endereço fornecido e teste a importação da planilha Excel.
+
+Se aparecer o aviso "Leitor de planilha não foi carregado" ao tentar
+importar, o arquivo vendor/xlsx.mini.min.js não chegou ao servidor (é o
+arquivo mais pesado da pasta, então é o mais fácil de faltar num upload
+parcial). Confira abrindo <seu-endereço>/vendor/xlsx.mini.min.js direto no
+navegador — se der erro/página em branco, reenvie esse arquivo específico
+dentro da pasta vendor. Depois, atualize a página com Ctrl+Shift+R (ou
+Cmd+Shift+R no Mac) para garantir que o navegador não está usando uma
+cópia antiga em cache.
 
 MIGRAÇÃO DOS DADOS ATUAIS
 
