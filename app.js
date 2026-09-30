@@ -389,8 +389,15 @@ async function importActiveExcel(e){
     if(!rows.length)throw new Error('A planilha está vazia.');
     var headerKeys=Object.keys(rows[0]).map(normalizedCategory);
     if(headerKeys.indexOf('LINHA')<0||headerKeys.indexOf('LOTE')<0)throw new Error('Use a planilha de Lotes Ativos exportada pelo Bovino.OS, com as colunas Linha e Lote.');
+    // Só aceita o relatório completo (todas as colunas marcadas no Bovino.OS). Sem "1ª Entrada" nenhum lote é
+    // reconhecido; sem as demais colunas os lotes entrariam com dieta, GMD, pesos e consumo zerados.
+    var REQUIRED=['Curral','Cab.','Mortes','Dieta','1ª Entrada','D. conf.','D. trato','GMD','Peso Est.','Consumo MN total da baia','kg/cab (MS)','kg/cab (MN)','%PV (MS)'],
+        missing=REQUIRED.filter(function(c){return headerKeys.indexOf(normalizedCategory(c))<0;});
+    if(missing.length)throw new Error('Relatório incompleto — faltam as colunas: '+missing.join(', ')+'. No Bovino.OS marque "Todos" em Colunas e exporte de novo. Nada foi alterado.');
     var result=parseActiveLotsExcel(rows),parsed=result.lots;
     if(!parsed.length)throw new Error('Nenhum lote dos currais A a P foi reconhecido na planilha.');
+    // Data da posição = data do nome do arquivo (Lotes_Ativos_AAAA-MM-DD). A data dentro da coluna Dieta é a entrada na dieta, não a do relatório.
+    var fm=String(f.name||'').match(/(\d{4})-(\d{2})-(\d{2})/),td=new Date(),rd=fm?fm[1]+'-'+fm[2]+'-'+fm[3]:td.getFullYear()+'-'+String(td.getMonth()+1).padStart(2,'0')+'-'+String(td.getDate()).padStart(2,'0');result.reportDate=rd;parsed.forEach(function(l){l.reportDate=rd;});
     state.lots=state.lots.filter(function(l){return l.source!=='feedmanager';}).concat(parsed);
     save();renderForms();renderAll();go('active');showToast(parsed.length+' lotes importados. Animais próprios são Próprio; Boitel e Parceria aparecem separados, com o Proprietário/cliente no card.');
   }catch(err){console.error(err);showToast(err.message||'Não foi possível ler esta planilha.');}finally{e.target.value='';}
