@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#173c2b">
   <meta name="description" content="Planejamento de vagas, entradas, saídas e fluxo de caixa do Rural Conf.">
   <title>Rural Conf.</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=41">
   <link rel="stylesheet" href="filters.css">
 </head>
 <body>
@@ -144,18 +144,21 @@
 
         <section class="page" id="page-rural">
           <div class="module-hero rural-bg"><div><span class="section-tag">BOI PRÓPRIO</span><h2>Rural</h2><p>Animais que chegam das fazendas pelo Planejamento Rural Pastagem e geram caixa quando saem gordos.</p></div><button class="btn white" id="openRuralImport">Importar do Planejamento</button></div>
+          <article class="card"><div class="card-head"><div><h2>Planos importados</h2><p>Desmarque para tirar um plano das contas sem apagar; marque de novo para voltar. O × exclui o plano e os lotes dele.</p></div></div><div id="ruralPlans" class="rural-plans"></div></article>
           <div class="grid form-layout"><article class="card"><div class="card-head"><div><h2>Incluir lote Rural</h2><p>Você também pode lançar manualmente uma previsão.</p></div></div><form id="ruralForm" class="lot-form" data-type="rural"></form></article><article class="card summary-panel" id="ruralSummary"></article></div>
           <article class="card"><div class="card-head"><div><h2>Lotes próprios</h2><p>Previsões importadas e lançamentos manuais.</p></div></div><div class="table-wrap"><table id="ruralTable"></table></div></article>
         </section>
 
         <section class="page" id="page-toreton">
           <div class="module-hero toreton-bg"><div><span class="section-tag">COMPRA ESTRATÉGICA</span><h2>Toreton</h2><p>Compre para ocupar vagas e programar receita nos meses em que faltará boi próprio.</p></div></div>
+          <article class="card"><div class="card-head"><div><h2>Simulações importadas</h2><p>Baixe o modelo, preencha vários lotes de Toreton no Excel e importe. Cada arquivo vira uma simulação: desmarque para tirar das contas, marque para voltar, × para excluir.</p></div><div class="sim-actions"><button type="button" class="btn ghost" id="toretonTemplateBtn">Baixar modelo Excel</button><button type="button" class="btn primary" id="toretonImportBtn">Importar Excel</button><input type="file" id="toretonImportInput" accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden></div></div><div id="toretonPlans" class="rural-plans"></div></article>
           <div class="grid form-layout"><article class="card"><div class="card-head"><div><h2>Incluir compra de Toreton</h2><p>Custo padrão US$ 1.100 por cabeça e venda padrão US$ 1.500.</p></div></div><form id="toretonForm" class="lot-form" data-type="toreton"></form></article><article class="card summary-panel" id="toretonSummary"></article></div>
           <article class="card"><div class="card-head"><div><h2>Compras planejadas</h2><p>Quantidade, entrada, saída e capital necessário.</p></div></div><div class="table-wrap"><table id="toretonTable"></table></div></article>
         </section>
 
         <section class="page" id="page-hotel">
           <div class="module-hero hotel-bg"><div><span class="section-tag">SERVIÇO A TERCEIROS</span><h2>Hotelaria</h2><p>Reserve vagas por parceiro e acompanhe a receita prevista de cada lote.</p></div></div>
+          <article class="card"><div class="card-head"><div><h2>Simulações importadas</h2><p>Baixe o modelo, preencha vários lotes de Hotelaria no Excel e importe. Cada arquivo vira uma simulação: desmarque para tirar das contas, marque para voltar, × para excluir.</p></div><div class="sim-actions"><button type="button" class="btn ghost" id="hotelTemplateBtn">Baixar modelo Excel</button><button type="button" class="btn primary" id="hotelImportBtn">Importar Excel</button><input type="file" id="hotelImportInput" accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden></div></div><div id="hotelPlans" class="rural-plans"></div></article>
           <div class="grid form-layout"><article class="card"><div class="card-head"><div><h2>Incluir lote de Hotelaria</h2><p>Receita padrão US$ 350 por cabeça na saída.</p></div></div><form id="hotelForm" class="lot-form" data-type="hotel"></form></article><article class="card summary-panel" id="hotelSummary"></article></div>
           <article class="card"><div class="card-head"><div><h2>Lotes de parceiros</h2><p>Vagas comprometidas e receita prevista.</p></div></div><div class="table-wrap"><table id="hotelTable"></table></div></article>
         </section>
@@ -186,6 +189,6 @@
   </div>
   <div id="penPrintArea" class="print-area" hidden></div>
   <script src="xlsx.mini.min.js?v=2"></script>
-  <script src="app.js?v=40"></script>
+  <script src="app.js?v=41"></script>
 </body>
 </html>

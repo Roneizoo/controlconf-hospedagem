@@ -90,3 +90,7 @@
 @media(max-width:1250px){.filter-grid{grid-template-columns:repeat(4,1fr)}.search-wide{grid-column:span 2}}
 @media(max-width:950px){.filter-grid{grid-template-columns:repeat(2,1fr)}.detail-hero,.detail-grid{grid-template-columns:repeat(2,1fr)}.notes-layout{grid-template-columns:1fr}}
 @media(max-width:650px){.filter-grid{grid-template-columns:1fr}.search-wide{grid-column:auto}.drawer-backdrop{padding:0}.drawer-panel{height:100vh;border-radius:0;padding:16px}.detail-hero,.detail-grid{grid-template-columns:1fr 1fr}}
+
+/* Planos importados (Rural) e Simulações importadas (Toreton / Hotelaria) */
+.rural-plans{display:grid;gap:10px}.rural-plan-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#f8faf8}.rural-plan-row.inactive{opacity:.6;background:#f2f2f0}.rural-plan-toggle{flex:0 0 auto}.rural-plan-toggle input{width:19px;height:19px}.rural-plan-info{flex:1;display:grid;gap:2px}.rural-plan-info strong{font-size:.92rem}.rural-plan-info span{color:var(--muted);font-size:.78rem}.rural-plan-delete{flex:0 0 auto;border:1px solid #e3c9c4;background:#fff;color:var(--danger);width:30px;height:30px;border-radius:9px;font-size:1.05rem;font-weight:900;line-height:1;cursor:pointer}.rural-plan-delete:hover{background:#fff0ed}tr.row-inactive{opacity:.55}
+.sim-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
