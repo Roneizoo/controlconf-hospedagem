@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#173c2b">
   <meta name="description" content="Planejamento de vagas, entradas, saídas e fluxo de caixa do Rural Conf.">
   <title>Rural Conf.</title>
-  <link rel="stylesheet" href="styles.css?v=41">
+  <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="filters.css">
 </head>
 <body>
@@ -44,13 +44,13 @@
           <span class="position" id="positionLabel">Nenhum relatório de lotes ativos importado</span>
           <div class="year-control"><span>Horizonte</span><select id="horizonMonths" aria-label="Horizonte do planejamento"><option value="12">12 meses</option><option value="24">24 meses</option></select><strong id="planningWindow"></strong></div>
           <button class="btn ghost" id="importPlanBtn">Importar Rural</button>
-          <button class="btn ghost" id="importActiveBtn">Importar lotes Excel</button>
+          <button class="btn ghost" id="importActiveBtn">Importar lotes PDF</button>
           <button class="btn ghost" id="importBackupBtn">Importar dados</button>
           <button class="btn ghost" id="exportBtn">Exportar</button>
           <button class="btn primary" id="printBtn">PDF</button>
         </div>
         <input type="file" id="importPlanInput" accept=".json,application/json" multiple hidden>
-        <input type="file" id="importActiveInput" accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
+        <input type="file" id="importActiveInput" accept=".pdf,application/pdf" hidden>
         <input type="file" id="importBackupInput" accept=".json,application/json" hidden>
       </header>
 
@@ -79,13 +79,13 @@
         </section>
 
         <section class="page" id="page-active">
-          <div class="page-intro"><div><span class="section-tag">BASE DE DADOS</span><h2>Lotes ativos do Feed Manager</h2><p>RIP, Toreton e Compras são animais próprios; Boitel e Parceria aparecem com o tipo do relatório.</p></div><button class="btn primary" id="activePageImportBtn">Importar planilha Excel</button></div>
+          <div class="page-intro"><div><span class="section-tag">BASE DE DADOS</span><h2>Lotes ativos do Feed Manager</h2><p>RIP, Toreton e Compras são animais próprios; qualquer outra categoria é tratada como Boitel.</p></div><button class="btn primary" id="activePageImportBtn">Importar relatório PDF</button></div>
           <div class="notice" id="activeNotice"></div>
           <article class="card"><div class="card-head"><div><h2>Banco de lotes ativos</h2><p>Somente Animal Próprio e Boitel. A saída é sempre calculada 120 dias após a entrada.</p></div></div><div class="table-wrap"><table id="activeTable"></table></div></article>
         </section>
 
         <section class="page" id="page-pens">
-          <div class="page-intro pen-map-intro"><div><span class="section-tag">OCUPAÇÃO FÍSICA</span><h2>Mapa dos Currais</h2><p>Visão dos currais das linhas A a P. O PASTO não participa do mapa nem dos cálculos.</p></div><div class="pen-intro-actions"><button class="btn secondary" id="penImportShipmentBtn">Importar programação de abate</button><button class="btn primary" id="penPageImportBtn">Importar planilha Excel</button><div class="pen-standard"><span>Capacidade padrão por curral</span><strong>160</strong><small>animais</small></div></div></div>
+          <div class="page-intro pen-map-intro"><div><span class="section-tag">OCUPAÇÃO FÍSICA</span><h2>Mapa dos Currais</h2><p>Visão dos currais das linhas A a P. O PASTO não participa do mapa nem dos cálculos.</p></div><div class="pen-intro-actions"><button class="btn secondary" id="penImportShipmentBtn">Importar programação de abate</button><button class="btn primary" id="penPageImportBtn">Importar relatório PDF</button><div class="pen-standard"><span>Capacidade padrão por curral</span><strong>160</strong><small>animais</small></div></div></div>
           <input type="file" id="penShipmentInput" accept=".csv,text/csv" hidden>
           <div class="kpi-grid pen-kpis" id="penKpis"></div>
           <article class="card filters">
@@ -94,7 +94,7 @@
               <label class="search-wide">Buscar lote, curral ou categoria/dono<input id="penSearch" type="search" placeholder="Ex.: 165/26, A 01 ou Bahia Rica"></label>
               <label>Bloco<select id="penBlockFilter"><option value="">Todos</option></select></label>
               <label>Linha<select id="penLineFilter"><option value="">Todas</option></select></label>
-              <label>Tipo<select id="penTypeFilter"><option value="">Todos</option><option value="rural">Próprio</option><option value="hotel">Boitel/Parceria</option></select></label>
+              <label>Tipo<select id="penTypeFilter"><option value="">Todos</option><option value="rural">Próprio</option><option value="hotel">Boitel</option></select></label>
               <label>Situação<select id="penStatusFilter"><option value="">Todas</option><option value="empty">Vazias</option><option value="occupied">Ocupadas</option><option value="partial">Com espaço perdido</option><option value="full">Lotadas</option><option value="over">Acima de 160</option></select></label>
               <label>Dieta<select id="penDietFilter"><option value="">Todas</option></select></label>
               <label>Anotações<select id="penNoteFilter"><option value="">Todas</option><option value="active">Com anotação ativa</option><option value="none">Sem anotação ativa</option></select></label>
@@ -144,21 +144,18 @@
 
         <section class="page" id="page-rural">
           <div class="module-hero rural-bg"><div><span class="section-tag">BOI PRÓPRIO</span><h2>Rural</h2><p>Animais que chegam das fazendas pelo Planejamento Rural Pastagem e geram caixa quando saem gordos.</p></div><button class="btn white" id="openRuralImport">Importar do Planejamento</button></div>
-          <article class="card"><div class="card-head"><div><h2>Planos importados</h2><p>Desmarque para tirar um plano das contas sem apagar; marque de novo para voltar. O × exclui o plano e os lotes dele.</p></div></div><div id="ruralPlans" class="rural-plans"></div></article>
           <div class="grid form-layout"><article class="card"><div class="card-head"><div><h2>Incluir lote Rural</h2><p>Você também pode lançar manualmente uma previsão.</p></div></div><form id="ruralForm" class="lot-form" data-type="rural"></form></article><article class="card summary-panel" id="ruralSummary"></article></div>
           <article class="card"><div class="card-head"><div><h2>Lotes próprios</h2><p>Previsões importadas e lançamentos manuais.</p></div></div><div class="table-wrap"><table id="ruralTable"></table></div></article>
         </section>
 
         <section class="page" id="page-toreton">
           <div class="module-hero toreton-bg"><div><span class="section-tag">COMPRA ESTRATÉGICA</span><h2>Toreton</h2><p>Compre para ocupar vagas e programar receita nos meses em que faltará boi próprio.</p></div></div>
-          <article class="card"><div class="card-head"><div><h2>Simulações importadas</h2><p>Baixe o modelo, preencha vários lotes de Toreton no Excel e importe. Cada arquivo vira uma simulação: desmarque para tirar das contas, marque para voltar, × para excluir.</p></div><div class="sim-actions"><button type="button" class="btn ghost" id="toretonTemplateBtn">Baixar modelo Excel</button><button type="button" class="btn primary" id="toretonImportBtn">Importar Excel</button><input type="file" id="toretonImportInput" accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden></div></div><div id="toretonPlans" class="rural-plans"></div></article>
           <div class="grid form-layout"><article class="card"><div class="card-head"><div><h2>Incluir compra de Toreton</h2><p>Custo padrão US$ 1.100 por cabeça e venda padrão US$ 1.500.</p></div></div><form id="toretonForm" class="lot-form" data-type="toreton"></form></article><article class="card summary-panel" id="toretonSummary"></article></div>
           <article class="card"><div class="card-head"><div><h2>Compras planejadas</h2><p>Quantidade, entrada, saída e capital necessário.</p></div></div><div class="table-wrap"><table id="toretonTable"></table></div></article>
         </section>
 
         <section class="page" id="page-hotel">
           <div class="module-hero hotel-bg"><div><span class="section-tag">SERVIÇO A TERCEIROS</span><h2>Hotelaria</h2><p>Reserve vagas por parceiro e acompanhe a receita prevista de cada lote.</p></div></div>
-          <article class="card"><div class="card-head"><div><h2>Simulações importadas</h2><p>Baixe o modelo, preencha vários lotes de Hotelaria no Excel e importe. Cada arquivo vira uma simulação: desmarque para tirar das contas, marque para voltar, × para excluir.</p></div><div class="sim-actions"><button type="button" class="btn ghost" id="hotelTemplateBtn">Baixar modelo Excel</button><button type="button" class="btn primary" id="hotelImportBtn">Importar Excel</button><input type="file" id="hotelImportInput" accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden></div></div><div id="hotelPlans" class="rural-plans"></div></article>
           <div class="grid form-layout"><article class="card"><div class="card-head"><div><h2>Incluir lote de Hotelaria</h2><p>Receita padrão US$ 350 por cabeça na saída.</p></div></div><form id="hotelForm" class="lot-form" data-type="hotel"></form></article><article class="card summary-panel" id="hotelSummary"></article></div>
           <article class="card"><div class="card-head"><div><h2>Lotes de parceiros</h2><p>Vagas comprometidas e receita prevista.</p></div></div><div class="table-wrap"><table id="hotelTable"></table></div></article>
         </section>
@@ -188,7 +185,7 @@
     </article>
   </div>
   <div id="penPrintArea" class="print-area" hidden></div>
-  <script src="xlsx.mini.min.js?v=2"></script>
-  <script src="app.js?v=41"></script>
+  <script src="vendor/pdf.min.js?v=2"></script>
+  <script src="app.js?v=45"></script>
 </body>
 </html>
