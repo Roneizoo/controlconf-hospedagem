@@ -1,0 +1,25 @@
+CONTROL CONF - RECEBIMENTO DA HOTELARIA
+Versao preparada em 07/10/2026
+
+Esta pasta e uma copia separada para avaliacao. Ela nao foi publicada no GitHub.
+
+COMO FUNCIONA
+1. A regra normal continua sendo 100% da hotelaria recebida na saida do lote.
+2. Na pagina Hotelaria, o quadro "Recebimento por dono" permite informar:
+   - o dono/cliente;
+   - o percentual antecipado;
+   - a data em que o dinheiro foi recebido.
+3. A regra por dono vale para todos os lotes atuais daquele dono e tambem para
+   os lotes do mesmo dono encontrados nas proximas importacoes.
+4. Na tabela da Hotelaria, o botao "$" permite alterar somente um lote.
+5. Exemplo: 85% antecipado significa que 85% entra no fluxo no mes da data
+   informada e os 15% restantes entram no mes de saida do lote.
+6. As regras ficam incluidas em Exportar/Importar dados e nos Planos Confirmados.
+
+ARQUIVOS PARA ATUALIZAR DEPOIS DA APROVACAO
+- index.html
+- app.js
+- styles.css
+- filters.css
+
+Antes de publicar, manter uma copia da versao atual que ja esta funcionando.

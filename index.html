@@ -157,6 +157,7 @@
         <section class="page" id="page-hotel">
           <div class="module-hero hotel-bg"><div><span class="section-tag">SERVIÇO A TERCEIROS</span><h2>Hotelaria</h2><p>Reserve vagas por parceiro e acompanhe a receita prevista de cada lote.</p></div></div>
           <div class="grid form-layout"><article class="card"><div class="card-head"><div><h2>Incluir lote de Hotelaria</h2><p>Receita padrão US$ 350 por cabeça na saída.</p></div></div><form id="hotelForm" class="lot-form" data-type="hotel"></form></article><article class="card summary-panel" id="hotelSummary"></article></div>
+          <article class="card"><div class="card-head"><div><h2>Recebimento por dono</h2><p>A regra normal continua sendo 100% na saída. Use esta opção somente quando um cliente antecipar parte do pagamento.</p></div></div><form id="hotelOwnerPaymentForm" class="filter-bar"><label>Dono / cliente<select id="hotelOwnerPaymentSelect"></select></label><label>Percentual antecipado<input id="hotelOwnerAdvancePercent" type="number" min="0" max="100" step="1" value="0"></label><label>Data recebida<input id="hotelOwnerAdvanceDate" type="date"></label><button class="btn primary" type="submit">Aplicar a todos deste dono</button><span class="filter-help" id="hotelOwnerPaymentHelp">O restante será recebido na saída de cada lote.</span></form></article>
           <article class="card"><div class="card-head"><div><h2>Lotes de parceiros</h2><p>Vagas comprometidas e receita prevista.</p></div></div><div class="table-wrap"><table id="hotelTable"></table></div></article>
         </section>
 
@@ -186,6 +187,6 @@
   </div>
   <div id="penPrintArea" class="print-area" hidden></div>
   <script src="vendor/pdf.min.js?v=2"></script>
-  <script src="app.js?v=45"></script>
+  <script src="app.js?v=46"></script>
 </body>
 </html>
