@@ -94,3 +94,7 @@
 /* Planos importados (Rural) e Simulações importadas (Toreton / Hotelaria) */
 .rural-plans{display:grid;gap:10px}.rural-plan-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#f8faf8}.rural-plan-row.inactive{opacity:.6;background:#f2f2f0}.rural-plan-toggle{flex:0 0 auto}.rural-plan-toggle input{width:19px;height:19px}.rural-plan-info{flex:1;display:grid;gap:2px}.rural-plan-info strong{font-size:.92rem}.rural-plan-info span{color:var(--muted);font-size:.78rem}.rural-plan-delete{flex:0 0 auto;border:1px solid #e3c9c4;background:#fff;color:var(--danger);width:30px;height:30px;border-radius:9px;font-size:1.05rem;font-weight:900;line-height:1;cursor:pointer}.rural-plan-delete:hover{background:#fff0ed}tr.row-inactive{opacity:.55}
 .sim-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+/* Capacidade variável por curral (Seca/Águas) */
+.pen-cap-edit{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:8px}.pen-cap-edit label{display:grid;gap:2px;font-size:.66rem;text-align:left;color:rgba(255,255,255,.85)}.pen-cap-edit input,.pen-cap-edit select{width:96px;padding:5px 7px;border-radius:8px;border:1px solid rgba(255,255,255,.4);background:#fff;color:var(--ink);font-weight:700;font-size:.82rem}.pen-cap-edit .pen-cap-custom input{width:64px}
+.pen-cap-edit label[hidden]{display:none}.pen-cap-edit select{width:118px}

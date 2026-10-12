@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#173c2b">
   <meta name="description" content="Planejamento de vagas, entradas, saídas e fluxo de caixa do Rural Conf.">
   <title>Rural Conf.</title>
-  <link rel="stylesheet" href="styles.css?v=47">
+  <link rel="stylesheet" href="styles.css?v=48">
   <link rel="stylesheet" href="filters.css">
 </head>
 <body>
@@ -85,7 +85,7 @@
         </section>
 
         <section class="page" id="page-pens">
-          <div class="page-intro pen-map-intro"><div><span class="section-tag">OCUPAÇÃO FÍSICA</span><h2>Mapa dos Currais</h2><p>Visão dos currais das linhas A a P. O PASTO não participa do mapa nem dos cálculos.</p></div><div class="pen-intro-actions"><button class="btn secondary" id="penImportShipmentBtn">Importar programação de abate</button><button class="btn primary" id="penPageImportBtn">Importar planilha Excel</button><div class="pen-standard"><span>Capacidade padrão por curral</span><strong>160</strong><small>animais</small></div></div></div>
+          <div class="page-intro pen-map-intro"><div><span class="section-tag">OCUPAÇÃO FÍSICA</span><h2>Mapa dos Currais</h2><p>Visão dos currais das linhas A a P. O PASTO não participa do mapa nem dos cálculos.</p></div><div class="pen-intro-actions"><button class="btn secondary" id="penImportShipmentBtn">Importar programação de abate</button><button class="btn primary" id="penPageImportBtn">Importar planilha Excel</button><div class="pen-standard"><span>Capacidade por curral</span><strong id="penCapResult">160</strong><small>animais</small><div class="pen-cap-edit"><label>Base (100%)<input id="penCapBase" type="number" min="1" step="1" value="160"></label><label>Lotação<select id="penCapPercent"><option value="100">Seca 100%</option><option value="75">Águas 75%</option><option value="custom">Outro %</option></select></label><label class="pen-cap-custom" hidden>%<input id="penCapCustom" type="number" min="1" max="150" step="1" value="100"></label></div></div></div></div>
           <input type="file" id="penShipmentInput" accept=".csv,text/csv" hidden>
           <div class="kpi-grid pen-kpis" id="penKpis"></div>
           <article class="card filters">
@@ -190,6 +190,6 @@
   </div>
   <div id="penPrintArea" class="print-area" hidden></div>
   <script src="xlsx.mini.min.js?v=2"></script>
-  <script src="app.js?v=47"></script>
+  <script src="app.js?v=48"></script>
 </body>
 </html>
