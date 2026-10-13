@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#173c2b">
   <meta name="description" content="Planejamento de vagas, entradas, saídas e fluxo de caixa do Rural Conf.">
   <title>Rural Conf.</title>
-  <link rel="stylesheet" href="styles.css?v=48">
+  <link rel="stylesheet" href="styles.css?v=49">
   <link rel="stylesheet" href="filters.css">
 </head>
 <body>
@@ -69,8 +69,8 @@
         </section>
 
         <section class="page" id="page-capacity">
-          <div class="page-intro"><div><span class="section-tag">PROJEÇÃO DE VAGAS</span><h2 id="capacityHorizonTitle">Capacidade nos próximos 12 meses</h2><p>O mês atual parte dos animais já alojados. Cada saída libera a vaga a partir do mês seguinte.</p></div><div class="fixed-cap"><span>Capacidade no mês atual</span><input id="currentCapacity" type="number" min="1" step="100" aria-label="Capacidade do mês atual"><small>animais</small></div></div>
-          <article class="card"><div class="card-head"><div><h2>Capacidade e ocupação mensal</h2><p>Altere a capacidade de cada mês conforme a condição operacional.</p></div></div><div class="table-wrap"><table id="capacityTable"></table></div></article>
+          <div class="page-intro"><div><span class="section-tag">PROJEÇÃO DE VAGAS</span><h2 id="capacityHorizonTitle">Capacidade nos próximos 12 meses</h2><p>O mês atual parte dos animais já alojados. Cada saída libera a vaga a partir do mês seguinte.</p></div><div class="fixed-cap cap-settings"><span>Capacidade no mês atual</span><strong id="currentCapacityValue">25.600</strong><small id="currentCapacityInfo">animais</small><div class="pen-cap-edit"><label>Currais<input id="capPens" type="number" min="1" step="1"></label><label>Animais/curral<input id="capBase" type="number" min="1" step="1"></label><label>Seca %<input id="capSeca" type="number" min="1" max="150" step="1"></label><label>Águas %<input id="capAguas" type="number" min="1" max="150" step="1"></label></div></div></div>
+          <article class="card"><div class="card-head"><div><h2>Capacidade e ocupação mensal</h2><p>Toque em Seca/Águas para trocar o período do mês. A capacidade é calculada: currais × animais por curral × % do período.</p></div></div><div class="table-wrap"><table id="capacityTable"></table></div></article>
           <div class="grid two"><article class="card"><div class="card-head"><h2>Curva de ocupação</h2><div class="chart-head-tools"><label>Visualizar <select id="capacityRange"><option value="1">1 mês</option><option value="2">2 meses</option><option value="3">3 meses</option><option value="4" selected>4 meses</option><option value="5">5 meses</option><option value="6">6 meses</option><option value="7">7 meses</option><option value="8">8 meses</option><option value="9">9 meses</option><option value="10">10 meses</option><option value="11">11 meses</option><option value="12">12 meses</option></select></label></div></div><div id="capacityChart" class="chart"></div></article><article class="card"><h2>Leitura do plano</h2><div id="capacityInsights"></div></article></div>
           <div class="section-divider"><span class="section-tag">MOVIMENTAÇÃO</span><h2>Entradas e saídas de animais</h2><p>Os movimentos explicam a ocupação e a liberação das vagas.</p></div>
           <div class="kpi-grid movement-kpis" id="movementKpis"></div>
@@ -85,7 +85,7 @@
         </section>
 
         <section class="page" id="page-pens">
-          <div class="page-intro pen-map-intro"><div><span class="section-tag">OCUPAÇÃO FÍSICA</span><h2>Mapa dos Currais</h2><p>Visão dos currais das linhas A a P. O PASTO não participa do mapa nem dos cálculos.</p></div><div class="pen-intro-actions"><button class="btn secondary" id="penImportShipmentBtn">Importar programação de abate</button><button class="btn primary" id="penPageImportBtn">Importar planilha Excel</button><div class="pen-standard"><span>Capacidade por curral</span><strong id="penCapResult">160</strong><small>animais</small><div class="pen-cap-edit"><label>Base (100%)<input id="penCapBase" type="number" min="1" step="1" value="160"></label><label>Lotação<select id="penCapPercent"><option value="100">Seca 100%</option><option value="75">Águas 75%</option><option value="custom">Outro %</option></select></label><label class="pen-cap-custom" hidden>%<input id="penCapCustom" type="number" min="1" max="150" step="1" value="100"></label></div></div></div></div>
+          <div class="page-intro pen-map-intro"><div><span class="section-tag">OCUPAÇÃO FÍSICA</span><h2>Mapa dos Currais</h2><p>Visão dos currais das linhas A a P. O PASTO não participa do mapa nem dos cálculos.</p></div><div class="pen-intro-actions"><button class="btn secondary" id="penImportShipmentBtn">Importar programação de abate</button><button class="btn primary" id="penPageImportBtn">Importar planilha Excel</button><div class="pen-standard"><span>Capacidade por curral</span><strong id="penCapResult">160</strong><small>animais</small><small id="penCapInfo" class="pen-cap-info"></small><button type="button" class="pen-cap-goto" id="penCapGoto">Ajustar em Capacidade</button></div></div></div>
           <input type="file" id="penShipmentInput" accept=".csv,text/csv" hidden>
           <div class="kpi-grid pen-kpis" id="penKpis"></div>
           <article class="card filters">
@@ -190,6 +190,6 @@
   </div>
   <div id="penPrintArea" class="print-area" hidden></div>
   <script src="xlsx.mini.min.js?v=2"></script>
-  <script src="app.js?v=48"></script>
+  <script src="app.js?v=49"></script>
 </body>
 </html>
