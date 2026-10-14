@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#173c2b">
   <meta name="description" content="Planejamento de vagas, entradas, saídas e fluxo de caixa do Rural Conf.">
   <title>Rural Conf.</title>
-  <link rel="stylesheet" href="styles.css?v=49">
+  <link rel="stylesheet" href="styles.css?v=51">
   <link rel="stylesheet" href="filters.css">
 </head>
 <body>
@@ -81,12 +81,12 @@
         <section class="page" id="page-active">
           <div class="page-intro"><div><span class="section-tag">BASE DE DADOS</span><h2>Lotes ativos do Feed Manager</h2><p>RIP, Toreton e Compras são animais próprios; Boitel e Parceria aparecem com o tipo do relatório.</p></div><button class="btn primary" id="activePageImportBtn">Importar planilha Excel</button></div>
           <div class="notice" id="activeNotice"></div>
-          <article class="card"><div class="card-head"><div><h2>Banco de lotes ativos</h2><p>Somente Animal Próprio e Boitel. A saída é sempre calculada 120 dias após a entrada.</p></div></div><div class="table-wrap"><table id="activeTable"></table></div></article>
+          <article class="card"><div class="card-head"><div><h2>Banco de lotes ativos</h2><p>Animal Próprio, Boitel e Parceria conforme a planilha. A saída segura é calculada 120 dias após a entrada.</p></div></div><div class="table-wrap"><table id="activeTable"></table></div></article>
         </section>
 
         <section class="page" id="page-pens">
-          <div class="page-intro pen-map-intro"><div><span class="section-tag">OCUPAÇÃO FÍSICA</span><h2>Mapa dos Currais</h2><p>Visão dos currais das linhas A a P. O PASTO não participa do mapa nem dos cálculos.</p></div><div class="pen-intro-actions"><button class="btn secondary" id="penImportShipmentBtn">Importar programação de abate</button><button class="btn primary" id="penPageImportBtn">Importar planilha Excel</button><div class="pen-standard"><span>Capacidade por curral</span><strong id="penCapResult">160</strong><small>animais</small><small id="penCapInfo" class="pen-cap-info"></small><button type="button" class="pen-cap-goto" id="penCapGoto">Ajustar em Capacidade</button></div></div></div>
-          <input type="file" id="penShipmentInput" accept=".csv,text/csv" hidden>
+          <div class="page-intro pen-map-intro"><div><span class="section-tag">OCUPAÇÃO FÍSICA</span><h2>Mapa dos Currais</h2><p>Visão dos currais das linhas A a P. O PASTO não participa do mapa nem dos cálculos.</p></div><div class="pen-intro-actions"><button class="btn ghost" id="penShipmentTemplateBtn" type="button" title="Baixa os lotes selecionados no mapa; sem seleção, baixa todos os lotes ativos">Baixar modelo de abate</button><button class="btn secondary" id="penImportShipmentBtn" type="button">Importar programação de abate</button><button class="btn primary" id="penPageImportBtn">Importar planilha Excel</button><div class="pen-standard"><span>Capacidade por curral</span><strong id="penCapResult">160</strong><small>animais</small><small id="penCapInfo" class="pen-cap-info"></small><button type="button" class="pen-cap-goto" id="penCapGoto">Ajustar em Capacidade</button></div></div></div>
+          <input type="file" id="penShipmentInput" accept=".xlsx,.xls,.csv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
           <div class="kpi-grid pen-kpis" id="penKpis"></div>
           <article class="card filters">
             <div class="filter-title"><div><small>LOCALIZAR</small><h2>Buscar e filtrar lotes</h2></div><button class="link-btn" id="clearPenFilters" type="button">Limpar filtros</button></div>
@@ -95,17 +95,17 @@
               <label>Bloco<select id="penBlockFilter"><option value="">Todos</option></select></label>
               <label>Linha<select id="penLineFilter"><option value="">Todas</option></select></label>
               <label>Tipo<select id="penTypeFilter"><option value="">Todos</option><option value="rural">Próprio</option><option value="hotel">Boitel/Parceria</option></select></label>
-              <label>Situação<select id="penStatusFilter"><option value="">Todas</option><option value="empty">Vazias</option><option value="occupied">Ocupadas</option><option value="partial">Com espaço perdido</option><option value="full">Lotadas</option><option value="over">Acima de 160</option></select></label>
+              <label>Situação<select id="penStatusFilter"><option value="">Todas</option><option value="empty">Vazias</option><option value="occupied">Ocupadas</option><option value="partial">Com espaço perdido</option><option value="full">Lotadas</option><option value="over">Acima da capacidade</option></select></label>
               <label>Dieta<select id="penDietFilter"><option value="">Todas</option></select></label>
               <label>Anotações<select id="penNoteFilter"><option value="">Todas</option><option value="active">Com anotação ativa</option><option value="none">Sem anotação ativa</option></select></label>
               <label>Consumo %PV mínimo<input id="penConsMin" type="text" inputmode="decimal" placeholder="Ex.: 1,8"></label>
               <label>Consumo %PV máximo<input id="penConsMax" type="text" inputmode="decimal" placeholder="Ex.: 2,5"></label>
               <label>Dias conf. mínimo<input id="penDaysMin" type="number" min="0" step="1" placeholder="Ex.: 10"></label>
               <label>Dias conf. máximo<input id="penDaysMax" type="number" min="0" step="1" placeholder="Ex.: 80"></label>
-              <label>Data de embarque<select id="penShipmentDate"><option value="">Todas</option><option value="none">Sem programação</option></select></label>
+              <label>Data de embarque<select id="penShipmentDate"><option value="">Todas</option><option value="none">Sem programação</option><option value="overdue">Embarque vencido</option></select></label>
             </div>
             <div class="quick-filters pen-quick-filters"><span>Atalhos:</span><button type="button" data-cons="low">Abaixo de 1,8%</button><button type="button" data-cons="high">Acima de 2,5%</button><button type="button" data-diet="TERMINACAO">Dieta Terminação</button><button type="button" data-notes="active">Com anotação</button><button type="button" data-days="1-10">1 a 10 dias</button><button type="button" data-days="50-80">50 a 80 dias</button></div>
-            <div class="pen-legend"><span><i class="pen-dot empty"></i>Vazia</span><span><i class="pen-dot rural"></i>Próprio</span><span><i class="pen-dot hotel"></i>Boitel</span><span><i class="pen-dot over"></i>Acima de 160</span></div>
+            <div class="pen-legend"><span><i class="pen-dot empty"></i>Vazia</span><span><i class="pen-dot rural"></i>Próprio</span><span><i class="pen-dot hotel"></i>Boitel/Parceria</span><span><i class="pen-dot over"></i>Acima da capacidade</span></div>
           </article>
           <section class="shipment-schedule" id="shipmentSchedule"></section>
           <section class="result-bar">
@@ -121,7 +121,7 @@
           <article class="card pen-map-card">
             <div id="penBlocks" class="pen-blocks"></div>
           </article>
-          <article class="card pen-capacity-note"><div><strong>Capacidade operacional livre</strong><span>Somente currais totalmente vazios × 160. Exemplo: 10 currais vazios representam 1.600 lugares disponíveis.</span></div><div><strong>Espaço perdido</strong><span>Depois que um curral recebe um lote, todo o restante é considerado perdido para novas entradas, mesmo que ele tenha apenas 80 ou 100 animais.</span></div></article>
+          <article class="card pen-capacity-note"><div><strong>Capacidade operacional livre</strong><span>Somente currais totalmente vazios × capacidade operacional por curral definida para o período.</span></div><div><strong>Espaço perdido</strong><span>Depois que um curral recebe um lote, todo o restante é considerado perdido para novas entradas, mesmo que ele ainda tenha capacidade interna.</span></div></article>
         </section>
 
         <section class="page" id="page-analysis">
@@ -190,6 +190,6 @@
   </div>
   <div id="penPrintArea" class="print-area" hidden></div>
   <script src="xlsx.mini.min.js?v=2"></script>
-  <script src="app.js?v=49"></script>
+  <script src="app.js?v=51"></script>
 </body>
 </html>

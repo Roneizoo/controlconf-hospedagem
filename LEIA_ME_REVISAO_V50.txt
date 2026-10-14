@@ -1,0 +1,30 @@
+CONTROL CONF — REVISAO V50 — 13/10/2026
+
+Esta versao foi preparada localmente e nao foi publicada no GitHub.
+
+REGRAS DE PRAZO MANTIDAS
+- 110 dias: previsao media usada somente no Painel de Analise para enxergar a possivel saida.
+- 120 dias: data segura usada na Visao Geral, ocupacao e fluxo financeiro.
+- Uma programacao real de embarque substitui a previsao para a quantidade programada.
+
+AJUSTES DESTA REVISAO
+1. Um Plano Confirmado agora guarda, junto com os lotes:
+   - simulacoes e planos importados, incluindo ativo/desativado;
+   - capacidade por curral e configuracao de Seca/Aguas;
+   - configuracoes do fluxo de caixa;
+   - regras de adiantamento da Hotelaria;
+   - programacoes de embarque.
+2. Ao abrir um Plano Confirmado, essas mesmas informacoes sao restauradas.
+3. Textos antigos de importacao por PDF foram atualizados para Excel.
+4. Textos de capacidade fixa em 160 foram atualizados para capacidade operacional variavel.
+
+COMPATIBILIDADE
+- Planos antigos que nao possuem os novos campos continuam abrindo com os valores padrao.
+- A importacao de lotes ativos continua sendo feita pelo Excel do Bovino.OS.
+
+ARQUIVOS PRINCIPAIS PARA PUBLICAR DEPOIS DA APROVACAO
+- index.html
+- app.js
+- styles.css
+- filters.css
+- xlsx.mini.min.js

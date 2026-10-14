@@ -1,0 +1,37 @@
+CONTROL CONF — REVISAO V51 — 14/10/2026
+Base: V50 (13/10/2026). Preparada localmente, nao publicada no GitHub.
+
+PLANILHA DE ABATE (Mapa dos Currais)
+1. Novo botao "Baixar modelo de abate" no topo do Mapa dos Currais.
+   - Com lotes selecionados no mapa: baixa so os selecionados.
+   - Sem selecao: baixa todos os lotes ativos.
+   - O botao "Planilha de abate" da barra de selecao continua funcionando.
+2. O modelo agora e Excel (.xlsx), com aba "Abate" e aba "Instrucoes".
+   A importacao aceita .xlsx e tambem o CSV antigo.
+3. Preenchimento:
+   - Data do embarque em DD/MM/AAAA (ou data do Excel) so nos lotes que vao sair.
+   - Linha sem data = nada muda (programacoes existentes continuam).
+   - Enviar = NAO (ou REMOVER) cancela a programacao.
+   - Quantidade vazia = lote inteiro.
+4. Conferencia na importacao (janela com o resultado):
+   - Nao importa: data impossivel (ex.: 31/02), embarque antes da entrada do lote,
+     lote nao encontrado, quantidade invalida, nome de lote repetido sem Identificador.
+   - Importa com aviso: quantidade maior que o lote (ajusta para o total do lote),
+     data ja passada, lote repetido na planilha (vale a ultima linha).
+
+EMBARQUE VENCIDO
+5. Quando a data do embarque ja passou e o lote continua no relatorio de Lotes Ativos
+   importado depois dessa data, o curral fica vermelho ("Embarque vencido"), a data
+   aparece como "vencido" na faixa de embarques e ha um aviso com a quantidade de lotes.
+   O filtro "Data de embarque" ganhou a opcao "Embarque vencido".
+
+LIMPEZA
+6. Ao importar os Lotes Ativos do Bovino.OS, as programacoes de lotes que nao vem mais
+   no relatorio (ja sairam) sao apagadas e o aviso informa quantas. As copias guardadas
+   nos Planos Confirmados nao mudam. Se houver embarque vencido, o aviso tambem mostra.
+
+ARQUIVOS PARA PUBLICAR
+- index.html  (app.js?v=51, styles.css?v=51)
+- app.js
+- styles.css
+(os demais arquivos da pasta nao mudaram)
