@@ -117,7 +117,7 @@
 .buyer-table{width:100%;border-collapse:collapse;font-size:11.5px}.buyer-table th{background:#2f6b47;color:#fff;padding:6px 7px;text-align:right;font-size:10.5px;-webkit-print-color-adjust:exact;print-color-adjust:exact}.buyer-table th small{font-weight:400;opacity:.85}.buyer-table td{padding:5px 7px;border-bottom:1px solid #d8e3db;text-align:right}.buyer-table th:first-child,.buyer-table td:first-child{text-align:left}.buyer-table tr.buyer-total td{border-top:2px solid #2f6b47;background:#eef5f0;-webkit-print-color-adjust:exact;print-color-adjust:exact}.buyer-notes{margin-top:12px;font-size:10px;color:#56675d}.buyer-notes p{margin:3px 0}}
 /* v54 — PDF do comprador: proprietários nas linhas, meses/quinzenas nas colunas, cores do interno; páginas na horizontal */
 .owner-buyer-opts{display:flex;align-items:center;gap:14px;flex-basis:100%;justify-content:flex-end}.owner-buyer-opts .owner-names{flex-basis:auto}.owner-days select{padding:7px 8px;border:1px solid var(--line);border-radius:8px;font-weight:800;background:#fff}
-@page landscapeReport{size:A4 landscape;margin:12mm}
+@page landscapeReport{size:A4 landscape;margin:0}
 @media print{html:has(body.print-owners),html:has(body.print-buyer),body.print-owners,body.print-buyer{page:landscapeReport}
 #buyerReport .bh{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #2f6b47;padding-bottom:8px}#buyerReport h1{margin:0;font-size:21px;color:#1f4d33}#buyerReport h1 span{font-weight:400;color:#56675d;font-size:16px}#buyerReport .bh p{margin:4px 0 0;font-size:12px}
 #buyerReport .btag{font-size:11px;background:#e9f2ec;color:#1f4d33;padding:5px 9px;border-radius:6px;font-weight:700;white-space:nowrap;-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -129,3 +129,12 @@
 
 @media print{#buyerReport tfoot,#ownerSummaryCard tfoot{display:table-row-group}#buyerReport thead,#ownerSummaryCard thead{display:table-row-group}}
 @media print{body.print-owners .app-shell,body.print-buyer .app-shell,body.print-owners .workspace,body.print-buyer .workspace,body.print-owners .content,body.print-buyer .content{min-height:0!important;height:auto!important}body.print-owners #page-analysis,body.print-buyer #page-analysis{min-height:0!important;padding:0!important;margin:0!important}}
+/* v56 — sem marcas do navegador (margem 0 + respiro interno), interno mais limpo, comprador em espanhol, gado a pasto */
+@media print{body.print-owners #ownerSummaryCard{padding:12mm 13mm!important}body.print-buyer #buyerReport{padding:12mm 13mm!important}
+body.print-owners #ownerSummaryCard .card-head,body.print-owners .col-pct{display:none!important}body.print-owners #ownerSummaryCard .print-report-title h1{font-size:20px;margin:0 0 4px;color:#1f4d33}body.print-owners #ownerPrintInfo{font-size:12px;line-height:1.5;margin:0 0 12px;color:#3d4f44}
+body.print-buyer #pastureCard{display:none!important}
+#buyerReport .bh{display:block;text-align:center;border-bottom:3px solid #2f6b47;padding-bottom:8px}#buyerReport .bh h1{font-size:24px;margin:0;color:#1f4d33}#buyerReport .bh h2{font-size:15px;margin:2px 0 4px;font-weight:600;color:#3d4f44}#buyerReport .bh p{margin:0;font-size:12px;color:#56675d}
+#buyerReport h2.bsec{font-size:13px;margin:14px 0 6px;color:#1f4d33}#buyerReport h2.bsec span{font-weight:400;color:#56675d;margin-left:8px;font-size:12px}}
+.pasture-table{width:100%;border-collapse:collapse;font-size:.84rem}.pasture-table th{background:#e9f2ec;color:#1f4d33;font-size:.74rem;text-align:left;padding:7px 8px}.pasture-table td{padding:5px 6px;border-bottom:1px solid var(--line)}.pasture-table td.c{text-align:center}.pasture-table input:not([type=checkbox]),.pasture-table select{width:100%;padding:6px 7px;border:1px solid var(--line);border-radius:7px;font:inherit;background:#fff}.pasture-table input[type=number]{max-width:90px}.pasture-table td.empty{color:var(--muted);padding:12px}.pasture-table [data-pasture-del]{font-size:1.2rem;color:#a93226}.pasture-total{font-size:.8rem;color:var(--muted);font-weight:700}
+
+.pasture-table select{min-width:110px}.pasture-table input[type=date]{min-width:150px}

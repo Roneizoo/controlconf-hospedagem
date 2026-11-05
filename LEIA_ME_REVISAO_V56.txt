@@ -1,0 +1,30 @@
+CONTROL CONF — REVISAO V56 — 05/11/2026
+Base: V51 do GitHub. Inclui V52 a V55 e o abaixo. Nao publicada.
+
+PDF INTERNO (Painel de Analise > Por proprietario > PDF interno)
+1. Sem a coluna "% do conf.".
+2. Titulo: "Confinamento Ypoti — Animais por proprietario"
+   Posicao dos lotes em ... · Relatorio emitido em ...
+   N proprietarios · N animais (da selecao) · Saida prevista: embarque programado ou N dias de cocho
+   Sem a lista de nomes no titulo.
+3. "Total dos 3 proprietarios selecionados" no lugar de "Selecionados (3)".
+4. Sem as marcas do navegador (nome do arquivo/data no alto, endereco/pagina embaixo).
+
+PDF PARA O COMPRADOR
+5. So em espanhol. Titulo centralizado: Confinamiento Ypoti / Oferta de ganado terminado /
+   Posicion de los lotes al ... · Emitido el ...
+6. Sem a lista de selecionados embaixo da tabela. Fica so a nota curta.
+7. Sem as marcas do navegador.
+
+GADO A PASTO (TIP) — so no PDF do comprador
+8. Novo quadro "Gado a pasto (TIP)" no Painel de Analise, digitado a mao:
+   Proprietario/Vendedor, Estancia, Lote, Raca (Nelore/Hibrido), Animais,
+   Previsao de abate, Ja programado. Nao entra na capacidade, no fluxo nem nos totais.
+9. No PDF do comprador sai um bloco "Ganado a pasto (TIP)" embaixo do confinamento,
+   no mesmo formato (proprietario x mes/quinzena, Total cabezas, Ya programado),
+   com Nelore e Hibrido ao lado do titulo. Com proprietarios marcados, sai so o pasto deles.
+
+ARQUIVOS PARA PUBLICAR
+- index.html (app.js?v=56, styles.css?v=56)
+- app.js
+- styles.css
