@@ -1,0 +1,28 @@
+CONTROL CONF — REVISAO V52 — 05/11/2026
+Base: V51 que esta no GitHub (commit de 14/10/2026). Nao publicada.
+
+MAPA DOS CURRAIS — CARTAO DO CURRAL
+1. A linha do lote nao repete mais a quantidade (ela ja esta no numero grande).
+   Fica: LOTE 183/26 · Proprio
+2. Dieta abreviada: Adap., Cresc., Term.
+   A dieta de transicao aparece como "1/3 Cresc. + 2/3 Term." (sem a data no meio).
+3. % PV e dias de confinamento aparecem inteiros: Term. · 1,50% PV · 134d
+   Passando o mouse aparece o nome completo da dieta e a quantidade do lote.
+4. O selo de embarque mostra so a data. A quantidade so aparece quando o
+   embarque e parcial (ex.: 27/11/2026 · 80 de 159).
+
+PAINEL DE ANALISE — POR PROPRIETARIO
+5. Novo quadro "Por proprietario": lotes, animais, % do confinamento, dias medios,
+   % PV medio, embarque programado e saida por mes (embarque programado ou 120 dias,
+   igual a Visao Geral), com linha de total.
+6. Lotes proprios sem proprietario no Bovino.OS aparecem pela categoria
+   (Proprio — TORETON, Proprio — RIP).
+7. Clicar num proprietario filtra o painel (KPIs, escala de abate e lista de lotes).
+   Clicar de novo tira o filtro. Tambem ha o filtro "Proprietario" na barra de filtros.
+8. "Gerar PDF" do quadro imprime so a tabela por proprietario.
+   O "Gerar relatorio PDF" da escala de abate mostra o proprietario quando filtrado.
+
+ARQUIVOS PARA PUBLICAR
+- index.html (app.js?v=52, styles.css?v=52)
+- app.js
+- styles.css

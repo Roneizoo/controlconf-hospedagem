@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#173c2b">
   <meta name="description" content="Planejamento de vagas, entradas, saídas e fluxo de caixa do Rural Conf.">
   <title>Rural Conf.</title>
-  <link rel="stylesheet" href="styles.css?v=51">
+  <link rel="stylesheet" href="styles.css?v=52">
   <link rel="stylesheet" href="filters.css">
 </head>
 <body>
@@ -127,8 +127,10 @@
         <section class="page" id="page-analysis">
           <div class="page-intro"><div><span class="section-tag">ANÁLISE OPERACIONAL</span><h2>Painel de Análise</h2><p>Filtre os lotes por linha, saída e tempo mínimo de cocho.</p></div></div>
           <div class="kpi-grid analysis-kpis" id="analysisKpis"></div>
+          <article class="card owner-summary" id="ownerSummaryCard"><div class="print-report-title"><h1>Rural Conf. — Lotes por proprietário</h1></div><div class="card-head"><div><h2>Por proprietário</h2><p id="ownerSummaryDate"></p></div><div class="availability-actions"><button class="btn primary" id="printOwnerSummary" type="button">Gerar PDF</button></div></div><p class="filter-help">Clique num proprietário para filtrar o painel abaixo (clique de novo para tirar o filtro).</p><div class="table-wrap"><table id="ownerSummaryTable"></table></div></article>
           <article class="card"><div class="card-head"><div><h2>Análise dos lotes</h2><p>Os totais abaixo consideram somente os filtros escolhidos.</p></div></div>
             <div class="filter-bar" aria-label="Filtros dos lotes ativos">
+              <label>Proprietário<select id="activeOwnerFilter"><option value="">Todos</option></select></label>
               <label>Linha<select id="activeLineFilter"><option value="">Todas</option></select></label>
               <label>Tipo<select id="activeTypeFilter"><option value="">Todos</option><option value="rural">Próprio</option><option value="hotel">Boitel</option></select></label>
               <label>Mês previsto para abate<select id="activeExitFilter"><option value="">Todos</option></select></label>
@@ -190,6 +192,6 @@
   </div>
   <div id="penPrintArea" class="print-area" hidden></div>
   <script src="xlsx.mini.min.js?v=2"></script>
-  <script src="app.js?v=51"></script>
+  <script src="app.js?v=52"></script>
 </body>
 </html>
