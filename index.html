@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#173c2b">
   <meta name="description" content="Planejamento de vagas, entradas, saídas e fluxo de caixa do Rural Conf.">
   <title>Rural Conf.</title>
-  <link rel="stylesheet" href="styles.css?v=57">
+  <link rel="stylesheet" href="styles.css?v=58">
   <link rel="stylesheet" href="filters.css">
 </head>
 <body>
@@ -129,6 +129,7 @@
           <div class="kpi-grid analysis-kpis" id="analysisKpis"></div>
           <article class="card owner-summary" id="ownerSummaryCard"><div class="print-report-title"><h1>Confinamento Ypoti — Animais por proprietário</h1><p id="ownerPrintInfo"></p></div><div class="card-head"><div><h2>Por proprietário</h2><p id="ownerSummaryDate"></p></div><div class="availability-actions owner-actions"><label class="owner-days">Dias de cocho<input id="ownerDaysInput" type="number" min="30" max="300" step="1" value="120"></label><button class="btn ghost" id="printOwnerSummary" type="button">PDF interno</button><button class="btn primary" id="printBuyerReport" type="button">PDF para o comprador</button><div class="owner-buyer-opts"><label class="owner-days">Colunas do comprador<select id="ownerBuyerPeriod"><option value="month">Mês</option><option value="fortnight">Quinzena</option></select></label><label class="owner-names"><input id="ownerShowNames" type="checkbox"> Mostrar proprietários no PDF do comprador</label></div></div></div><p class="filter-help" id="ownerRuleNote"></p><p class="filter-help">Marque os proprietários para somar, filtrar o painel e sair nos PDFs. Sem marcação, vale para todos.</p><div class="owner-warn" id="ownerWeightWarn" hidden></div><div class="table-wrap"><table id="ownerSummaryTable"></table></div></article>
           <article class="card pasture-card" id="pastureCard"><div class="card-head"><div><h2>Gado a pasto (TIP) — só para o PDF do comprador</h2><p>Digite à mão os lotes a pasto que podem ser ofertados. Não entram na capacidade, no fluxo nem nos totais do confinamento. Com proprietários marcados no quadro acima, sai só o pasto deles.</p></div><div class="availability-actions"><span class="pasture-total" id="pastureTotal"></span><button class="btn secondary" id="pastureAdd" type="button">+ Lote a pasto</button></div></div><datalist id="pastureOwnerList"></datalist><div class="table-wrap"><table class="pasture-table"><thead><tr><th>Proprietário / Vendedor</th><th>Estância</th><th>Lote</th><th>Raça</th><th>Animais</th><th>Previsão de abate</th><th>Já programado</th><th></th></tr></thead><tbody id="pastureLotsBody"></tbody></table></div></article>
+          <article class="card pasture-card" id="purchaseCard"><div class="card-head"><div><h2>Compras previstas — só para o PDF do comprador</h2><p>Animais que ainda vão ser comprados. A saída é a data de entrada + os Dias de cocho do quadro Por proprietário. No PDF do comprador somam dentro de "Ganado en confinamiento", na linha do proprietário. Não entram na capacidade nem no fluxo.</p></div><div class="availability-actions"><span class="pasture-total" id="purchaseTotal"></span><button class="btn secondary" id="purchaseAdd" type="button">+ Compra prevista</button></div></div><div class="table-wrap"><table class="pasture-table"><thead><tr><th>Proprietário</th><th>Descrição / Lote</th><th>Animais</th><th>Entrada prevista</th><th>Saída prevista</th><th></th></tr></thead><tbody id="purchaseLotsBody"></tbody></table></div></article>
           <section id="buyerReport" class="buyer-report" aria-hidden="true"></section>
           <article class="card"><div class="card-head"><div><h2>Análise dos lotes</h2><p>Os totais abaixo consideram somente os filtros escolhidos.</p></div></div>
             <div class="filter-bar" aria-label="Filtros dos lotes ativos">
@@ -194,6 +195,6 @@
   </div>
   <div id="penPrintArea" class="print-area" hidden></div>
   <script src="xlsx.mini.min.js?v=2"></script>
-  <script src="app.js?v=57"></script>
+  <script src="app.js?v=58"></script>
 </body>
 </html>

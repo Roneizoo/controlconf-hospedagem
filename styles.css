@@ -137,3 +137,4 @@ body.print-buyer #pastureCard{display:none!important}
 .pasture-table{width:100%;border-collapse:collapse;font-size:.84rem}.pasture-table th{background:#e9f2ec;color:#1f4d33;font-size:.74rem;text-align:left;padding:7px 8px}.pasture-table td{padding:5px 6px;border-bottom:1px solid var(--line)}.pasture-table td.c{text-align:center}.pasture-table input:not([type=checkbox]),.pasture-table select{width:100%;padding:6px 7px;border:1px solid var(--line);border-radius:7px;font:inherit;background:#fff}.pasture-table input[type=number]{max-width:90px}.pasture-table td.empty{color:var(--muted);padding:12px}.pasture-table [data-pasture-del]{font-size:1.2rem;color:#a93226}.pasture-total{font-size:.8rem;color:var(--muted);font-weight:700}
 
 .pasture-table select{min-width:110px}.pasture-table input[type=date]{min-width:150px}
+.purchase-exit{font-weight:800;color:#1f4d33;white-space:nowrap}

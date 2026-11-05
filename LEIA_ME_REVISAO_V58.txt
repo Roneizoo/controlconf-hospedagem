@@ -1,0 +1,21 @@
+CONTROL CONF — REVISAO V58 — 05/11/2026
+Base: V57. Nao publicada.
+
+PDF PARA O COMPRADOR
+1. Sem Nelore e Hibrido (quadrinhos e bloco do pasto).
+2. Quadrinhos do topo: Confinamiento · Pasto (TIP) · Total general · Periodo.
+   (Sem pasto cadastrado: Cabezas · Periodo.)
+3. No fim: "Total general (confinamiento + pasto)" por mes/quinzena.
+
+COMPRAS PREVISTAS (novo quadro no Painel de Analise, digitado a mao)
+4. Proprietario (sugere RURAL BIOENERGIA S.A.), Descricao/Lote, Animais,
+   Entrada prevista. A tela mostra a Saida prevista = entrada + Dias de cocho.
+5. No PDF do comprador somam dentro de "Ganado en confinamiento", na linha do
+   proprietario e no mes/quinzena da saida. Nao aparece "a ingresar".
+6. Nao entram na capacidade, no fluxo, no quadro Por proprietario nem no PDF interno.
+   Com proprietarios marcados, so saem as compras deles.
+
+ARQUIVOS PARA PUBLICAR
+- index.html (app.js?v=58, styles.css?v=58)
+- app.js
+- styles.css
