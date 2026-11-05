@@ -1,0 +1,11 @@
+CONTROL CONF — REVISAO V57 — 05/11/2026
+Base: V56 (publicada). So uma correcao:
+
+- PDF interno e PDF para o comprador saem na HORIZONTAL direto, sem precisar girar.
+  O app liga a pagina A4 horizontal (sem margens do navegador) so na hora de gerar
+  esses dois PDFs e desliga depois. Os outros PDFs do app nao mudam.
+
+ARQUIVOS PARA PUBLICAR
+- index.html (app.js?v=57, styles.css?v=57)
+- app.js
+- styles.css
