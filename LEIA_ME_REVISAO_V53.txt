@@ -1,0 +1,34 @@
+CONTROL CONF — REVISAO V53 — 05/11/2026
+Base: V51 do GitHub. Inclui tudo da V52 (cartao do curral) e mais o abaixo.
+Nao publicada.
+
+QUADRO "POR PROPRIETARIO" (Painel de Analise)
+1. Todos os lotes proprios entram em RURAL BIOENERGIA S.A. (sem separar TORETON e RIP).
+2. Nomes em maiusculas e padronizados (S.A., E.A.S.).
+3. Campo "Dias de cocho" (padrao 120). Trocando, por exemplo, para 100, as colunas
+   de saida por mes se recalculam. O embarque programado continua valendo pela
+   data dele. E so um teste deste quadro: Visao Geral e Capacidade seguem com 120.
+4. Caixinha em cada proprietario. Os marcados:
+   - ganham uma linha "Selecionados" com a soma;
+   - filtram o painel de baixo (KPIs, escala de abate e lista de lotes);
+   - sao os unicos que saem nos PDFs.
+   A selecao e os dias ficam guardados.
+
+DOIS PDFs
+5. PDF interno (para o presidente): o quadro com proprietarios, % do confinamento,
+   dias, % PV, embarque programado e saida por mes. Com selecao, sai so os marcados
+   e a soma.
+6. PDF para o comprador (frigorifico), em espanhol/portugues:
+   - cabecas por quinzena, Nelore x Hibrido, peso estimado de saida, dias de corral
+     e quanto ja esta programado; total e periodo;
+   - peso estimado = peso atual + GMD ate a data de saida (confere com o "Peso de
+     saida" do Bovino.OS);
+   - sem nomes de proprietarios; marcar "Mostrar proprietarios no PDF do comprador"
+     para incluir;
+   - Enfermaria fica de fora; pesos fora de 250–800 kg nao entram na media e
+     aparecem num aviso no app.
+
+ARQUIVOS PARA PUBLICAR
+- index.html (app.js?v=53, styles.css?v=53)
+- app.js
+- styles.css

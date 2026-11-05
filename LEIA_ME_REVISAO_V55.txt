@@ -1,0 +1,16 @@
+CONTROL CONF — REVISAO V55 — 05/11/2026
+Base: V51 do GitHub. Inclui V52, V53, V54 e o abaixo. Nao publicada.
+
+PDF PARA O COMPRADOR — MAIS ENXUTO
+1. Saiu o peso medio estimado (quadrinho e linha) e a linha de dias de corral.
+2. Nelore e Hibrido nao aparecem mais detalhados na tabela: ficam so nos quadrinhos
+   do topo (Cabecas · Nelore · Hibrido · Periodo).
+3. Com "Mostrar proprietarios": uma linha por proprietario; embaixo Total de cabecas
+   e Ja programado.
+   Sem proprietarios: so Total de cabecas e Ja programado por mes/quinzena.
+4. Continua: Mes ou Quinzena, A4 horizontal, nome do arquivo com data, PT/ES.
+
+ARQUIVOS PARA PUBLICAR
+- index.html (app.js?v=55, styles.css?v=55)
+- app.js
+- styles.css

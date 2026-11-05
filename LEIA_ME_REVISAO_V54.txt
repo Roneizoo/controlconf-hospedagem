@@ -1,0 +1,20 @@
+CONTROL CONF — REVISAO V54 — 05/11/2026
+Base: V51 do GitHub. Inclui V52 (cartao do curral), V53 (Por proprietario) e o abaixo.
+Nao publicada.
+
+PDF PARA O COMPRADOR — NOVO FORMATO
+1. Igual ao interno: linhas = proprietarios (ou raca), colunas = meses, mais Total.
+2. "Mostrar proprietarios no PDF do comprador":
+   - marcado (Opcao A): cada proprietario com Nelore e Hibrido embaixo, so quantidade;
+   - desmarcado (Opcao B): so Nelore e Hibrido.
+3. Embaixo: Total de cabecas, Peso medio estimado de saida, Dias de corral e
+   Ja programado, por coluna.
+4. "Colunas do comprador": Mes ou Quinzena.
+5. Cores do PDF interno (cabecalho verde-claro, total destacado).
+6. Os dois PDFs (interno e comprador) saem em A4 horizontal, numa pagina.
+7. Nome do arquivo com data: Oferta_ganado_Confinamento_Ypoti_AAAA-MM-DD.
+
+ARQUIVOS PARA PUBLICAR
+- index.html (app.js?v=54, styles.css?v=54)
+- app.js
+- styles.css
